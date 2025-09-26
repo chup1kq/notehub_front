@@ -4,7 +4,7 @@ import {useRoutes} from "react-router-dom";
 export const AppRoutes = () => {
     return useRoutes([
         {
-            path: '*',
+            path: '/',
             element: <NotFound/>,
         }
     ]);
