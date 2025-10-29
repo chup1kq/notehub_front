@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { CiSearch } from "react-icons/ci";
+import {CiSearch} from "react-icons/ci";
 
-function SearchBar({onSearch, doSearch, text}) {
+export const SearchBar = ({onSearch, doSearch, text}) => {
     const [inputValue, setInputValue] = useState("");
 
     const handleInputChange = (event) => {
@@ -16,24 +16,21 @@ function SearchBar({onSearch, doSearch, text}) {
     };
 
     return (
-        <div style={{width: '100%'}}>
-            <div className="input-group rounded">
-                <input id='searchBar'
-                       type="search"
-                       className="form-control rounded"
-                       placeholder={text}
-                       aria-label="Search"
-                       aria-describedby="search-addon"
-                       onChange={handleInputChange}/>
-                <button type='button'
-                        className="input-group-text border-0"
-                        id="search-addon"
-                        onClick={makeSearch}>
-                    <CiSearch />
-                </button>
-            </div>
+        <div className="input-group rounded align-items-center searchBar">
+            <input id='NoteHubSearchBar'
+                   type="search"
+                   className="form-control rounded me-2"
+                   placeholder={text}
+                   aria-label="Search"
+                   aria-describedby="search-addon"
+                   onChange={handleInputChange}
+                   onKeyDown={(e) => {
+                       if (e.key === "Enter") {
+                           makeSearch();
+                       }
+                   }}/>
+            <CiSearch className={"icon active"}
+                      onClick={makeSearch}/>
         </div>
     );
 }
-
-export default SearchBar;
