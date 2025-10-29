@@ -1,0 +1,19 @@
+.dark-theme {
+    --background: 26, 32, 44;
+    --text: 237, 237, 238;
+    --primary: 22, 115, 255;
+    --secondary: 10, 18, 30;
+    --navbarBackground: 45, 55, 72;
+    --themeAlt: 0, 0, 0;
+    --themeMain: 255, 255, 255;
+}
+
+.light-theme {
+    --background: 251, 251, 253;
+    --text: 10, 18, 30;
+    --primary: 22, 115, 255;
+    --secondary: 10, 18, 30;
+    --navbarBackground: 240, 240, 240;
+    --themeAlt: 255, 255, 255;
+    --themeMain: 0, 0, 0;
+}
