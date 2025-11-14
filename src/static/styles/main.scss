@@ -930,3 +930,23 @@ button.auth {
   display: flex;
   align-items: center;
 }
+
+@media (max-width: 200px) {
+  .header-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .header-right {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+
+  .header-center {
+    display: none;
+  }
+}
