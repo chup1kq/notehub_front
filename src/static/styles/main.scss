@@ -586,18 +586,7 @@ button.auth {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
-  ul {
-    list-style: none;
-    margin-top: 4rem;
-    padding: 0;
-    text-align: center;
-  }
-
-  li {
-    margin: 2rem 0;
-    text-transform: uppercase;
-  }
+  gap: 1rem;
 
   a, button {
     text-decoration: none;

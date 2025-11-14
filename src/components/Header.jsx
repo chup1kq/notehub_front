@@ -71,28 +71,24 @@ export const Header = () => {
                     <RxCross2/>
                 </button>
                 <div className="mobile-menu">
-                    <ul>
-                        <li>
-                            <SearchBar
-                                onSearch={() => {}}
-                                doSearch={(value) => {
-                                    search(value);
-                                    setDrawerOpen(false);
-                                }}
-                            />
-                        </li>
-                        {user ? (
-                            <>
-                                <li><a href="/account">{user}</a></li>
-                                <li><button onClick={() => { logout(); setDrawerOpen(false); }}>Выйти</button></li>
-                            </>
-                        ) : (
-                            <>
-                                <li><a href="/login">Войти</a></li>
-                                <li><a href="/register">Зарегистрироваться</a></li>
-                            </>
-                        )}
-                    </ul>
+                    <SearchBar
+                        onSearch={() => {}}
+                        doSearch={(value) => {
+                            search(value);
+                            setDrawerOpen(false);
+                        }}
+                    />
+                    {user ? (
+                        <>
+                            <a href="/account">{user}</a>
+                            <button onClick={() => { logout(); setDrawerOpen(false); }}>Выйти</button>
+                        </>
+                    ) : (
+                        <>
+                            <a href="/login">Войти</a>
+                            <a href="/register">Зарегистрироваться</a>
+                        </>
+                    )}
                 </div>
             </div>
         </>
