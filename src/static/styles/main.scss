@@ -796,7 +796,7 @@ button.auth {
 
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 90%;
   margin: 0 auto;
 }
 
@@ -823,6 +823,8 @@ button.auth {
 .col-md-9,
 .col {
   flex: 1 0 0;
+  padding-right: 0.25rem;
+  padding-left: 0.25rem;
 }
 
 @media (min-width: 768px) {
