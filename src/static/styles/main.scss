@@ -744,12 +744,17 @@ button.auth {
 .button_secondary {
   border: 2px solid var(--themeMain);
   background: transparent;
-  color: var(--themeMain) !important;
+  color: rgb(var(--themeMain));
 
   &:hover {
     background-color: var(--secondary-hover-color);
-    color: var(--themeAlt);
+    color: rgb(var(--themeAlt));
   }
+}
+
+.page_number {
+  color: rgb(var(--themeMain)) !important;
+  padding-bottom: 0.5rem;
 }
 
 .toolbar {

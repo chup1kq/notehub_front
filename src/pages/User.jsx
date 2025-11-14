@@ -73,14 +73,14 @@ export const User = () => {
                                 </div>))}
                             </div>
                             {page.totalPages > 1 && (
-                                <div className="pagination toolbar"
+                                <div className="toolbar"
                                      style={{justifyContent: "center", marginTop: "1rem"}}>
                                     <button className="button button_secondary" disabled={page.currentPage === 1}
                                             onClick={() => handlePageChange(page.currentPage - 1)}>Previous
                                     </button>
-                                    <span
+                                    <span className={"page_number"}
                                         style={{alignSelf: "center"}}>Page {page.currentPage} of {page.totalPages}
-                            </span>
+                                    </span>
                                     <button className="button button_secondary"
                                             disabled={page.currentPage === page.totalPages}
                                             onClick={() => handlePageChange(page.currentPage + 1)}>Next
