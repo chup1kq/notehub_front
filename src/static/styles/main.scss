@@ -645,3 +645,56 @@ button.auth {
   background: rgb(var(--background));
 }
 
+@media (max-width: 576px) {
+  .icon {
+    margin-right: 0;
+  }
+
+  .header-grid {
+    grid-template-columns: 1fr auto;
+  }
+
+  .logo {
+    margin-right: 10px;
+  }
+
+  .navbar {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .header-right {
+    gap: 0.5rem;
+  }
+
+  .logo {
+    font-size: 1.4rem;
+  }
+
+  .icon.theme {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hide-sm { display: none !important; }
+  .show-sm { display: flex !important; }
+
+  .note-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .note-settings-container {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .note-settings,
+  .time-settings {
+    width: 100%;
+    margin-top: 0;
+  }
+}
