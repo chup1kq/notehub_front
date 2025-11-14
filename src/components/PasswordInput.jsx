@@ -1,26 +1,23 @@
-import {BsEye, BsEyeSlash} from "react-icons/bs";
-import React, {useState} from "react";
+import { BsEye, BsEyeSlash } from "react-icons/bs";
+import React, { useState } from "react";
 
-export const PasswordInput = ({value, onChange}) => {
-    const [passwordVisible, setPasswordVisible] = useState(false);
+export const PasswordInput = ({value, onChange, placeholder, className = ""}) => {
+    const [visible, setVisible] = useState(false);
 
     return (
-        <div className={`position-relative mb-2`}>
+        <div className="auth-input-wrapper">
             <input
-                className="form-control pe-4"
-                onChange={onChange}
-                type={passwordVisible ? "text" : "password"}
-                placeholder={'Password'}
+                type={visible ? "text" : "password"}
                 value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                className={`auth-input ${className}`}
             />
             <span
-                className="position-absolute top-50 end-0 translate-middle-y me-2"
-                style={{cursor: 'pointer'}}
-                onMouseDown={() => setPasswordVisible(true)}
-                onMouseUp={() => setPasswordVisible(false)}
-                onMouseLeave={() => setPasswordVisible(false)}
+                className="auth-input-icon"
+                onClick={() => setVisible(v => !v)}
             >
-                {passwordVisible ? <BsEye/> : <BsEyeSlash/>}
+                {visible ? <BsEye /> : <BsEyeSlash />}
             </span>
         </div>
     );
