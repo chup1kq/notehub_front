@@ -535,3 +535,20 @@ button.auth {
     transform: scale(0.95);
   }
 }
+
+.card {
+  border: 1px solid rgba(var(--text), 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgb(var(--navbarBackground));
+}
+
+.card-header {
+  padding: 0.75rem 1rem;
+  background: rgba(var(--navbarBackground));
+  border-bottom: 1px solid rgba(var(--text), 0.1);
+}
+
+.card-body {
+  padding: 1rem;
+}
