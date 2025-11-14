@@ -29,40 +29,43 @@ export const Header = () => {
     return (
         <>
             <nav className="navbar">
-                <div className="header-grid">
-                    <div className="header-left">
-                        <a className="logo text" href="/">NoteHub</a>
-                    </div>
-                    <div className="header-center hide-sm">
-                        <SearchBar onSearch={() => {}} doSearch={search}/>
-                    </div>
-                    <div className="header-right">
-                        {theme === "light-theme" ? (
-                            <BsMoonFill className="icon theme active" onClick={toggleTheme}/>
-                        ) : (
-                            <BsSunFill className="icon theme active" onClick={toggleTheme}/>
-                        )}
-                        {!token ? (
-                            <>
-                                <a href="/login" className="auth text hide-sm">Войти</a>
-                                <span className="auth-separator hide-sm">/</span>
-                                <a href="/register" className="auth text hide-sm">Зарегистрироваться</a>
-                            </>
-                        ) : (
-                            <div className="user-block hide-sm">
-                                <a href="/account" className="auth text user-name">{user}</a>
-                                <button type="button" onClick={logout} className="auth logout-btn">
-                                    <MdLogout className="icon"/>
-                                </button>
-                            </div>
-                        )}
-                        <button
-                            className="burger-btn show-sm"
-                            onClick={() => setDrawerOpen(true)}
-                            aria-label="Open menu"
-                        >
-                            <GiHamburgerMenu/>
-                        </button>
+                <div className="navbar-inner">
+                    <div className="header-grid">
+                        <div className="header-left">
+                            <a className="logo text" href="/">NoteHub</a>
+                        </div>
+                        <div className="header-center hide-sm">
+                            <SearchBar onSearch={() => {
+                            }} doSearch={search}/>
+                        </div>
+                        <div className="header-right">
+                            {theme === "light-theme" ? (
+                                <BsMoonFill className="icon theme active" onClick={toggleTheme}/>
+                            ) : (
+                                <BsSunFill className="icon theme active" onClick={toggleTheme}/>
+                            )}
+                            {!token ? (
+                                <>
+                                    <a href="/login" className="auth text hide-sm">Войти</a>
+                                    <span className="auth-separator hide-sm">/</span>
+                                    <a href="/register" className="auth text hide-sm">Зарегистрироваться</a>
+                                </>
+                            ) : (
+                                <div className="user-block hide-sm">
+                                    <a href="/account" className="auth text user-name">{user}</a>
+                                    <button type="button" onClick={logout} className="auth logout-btn">
+                                        <MdLogout className="icon"/>
+                                    </button>
+                                </div>
+                            )}
+                            <button
+                                className="burger-btn show-sm"
+                                onClick={() => setDrawerOpen(true)}
+                                aria-label="Open menu"
+                            >
+                                <GiHamburgerMenu/>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </nav>

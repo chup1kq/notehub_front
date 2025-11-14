@@ -16,9 +16,17 @@ body {
 .navbar {
   width: 100%;
   background: rgb(var(--navbarBackground));
-  padding: 1rem 2rem;
   display: flex;
   justify-content: center;
+}
+
+.navbar > .navbar-inner {
+  width: 100%;
+  max-width: 90%; /* как твой .container */
+  padding: 1rem 0; /* чтобы не ломать ширину */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .logo {
@@ -612,7 +620,7 @@ button.auth {
   grid-template-columns: 1fr minmax(200px, 600px) 1fr;
   align-items: center;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1300px;
 }
 
 .hide-sm { display: flex; }
