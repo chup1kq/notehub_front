@@ -894,3 +894,37 @@ button.auth {
   border: 1px solid rgba(0, 123, 255, 0.3);
   color: rgba(0, 123, 255);
 }
+
+.pagination-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pagination-btn {
+  padding: 0.45rem 1rem;
+  border-radius: 9999px; /* полностью круглые */
+  border: 2px solid rgb(var(--themeMain));
+  background: transparent;
+  color: rgb(var(--themeMain));
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover {
+  background: rgba(var(--themeMain), 0.15);
+  color: rgb(var(--themeAlt));
+}
+
+.pagination-number {
+  font-size: 1rem;
+  color: rgb(var(--themeMain));
+  padding: 0.3rem 0.5rem;
+  display: flex;
+  align-items: center;
+}

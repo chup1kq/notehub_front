@@ -73,18 +73,26 @@ export const User = () => {
                                 </div>))}
                             </div>
                             {page.totalPages > 1 && (
-                                <div className="toolbar"
-                                     style={{justifyContent: "center", marginTop: "1rem"}}>
-                                    <button className="button button_secondary" disabled={page.currentPage === 1}
-                                            onClick={() => handlePageChange(page.currentPage - 1)}>Previous
-                                    </button>
-                                    <span className={"page_number"}
-                                        style={{alignSelf: "center"}}>Page {page.currentPage} of {page.totalPages}
+                                <div className="pagination-toolbar">
+                                    {page.currentPage > 1 && (
+                                        <button
+                                            className="pagination-btn"
+                                            onClick={() => handlePageChange(page.currentPage - 1)}
+                                        >
+                                            Previous
+                                        </button>
+                                    )}
+                                    <span className="pagination-number">
+                                        Page {page.currentPage} of {page.totalPages}
                                     </span>
-                                    <button className="button button_secondary"
-                                            disabled={page.currentPage === page.totalPages}
-                                            onClick={() => handlePageChange(page.currentPage + 1)}>Next
-                                    </button>
+                                    {page.currentPage < page.totalPages && (
+                                        <button
+                                            className="pagination-btn"
+                                            onClick={() => handlePageChange(page.currentPage + 1)}
+                                        >
+                                            Next
+                                        </button>
+                                    )}
                                 </div>
                             )}
                             <div className={"d-flex justify-content-center"}>
