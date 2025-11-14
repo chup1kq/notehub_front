@@ -3,32 +3,17 @@ import {IoMdEye} from "react-icons/io";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 
-const nts: Array<Note> = [
-    {
-        id: 1,
-        createdAt: Date,
-        title: "first",
-        content: "string",
-        registeredUsers: 1,
-        anonymousUsers: 2
-    },
-    {
-        id: "2",
-        createdAt: Date,
-        title: "second",
-        content: "string",
-        registeredUsers: 3,
-        anonymousUsers: 4
-    },
-    {
-        id: "3",
-        createdAt: Date,
-        title: "second",
-        content: "string",
-        registeredUsers: 3,
-        anonymousUsers: 4
-    }
-]
+const nts: Array<Note> = [{
+    id: 1, createdAt: Date, title: "first", content: "string", registeredUsers: 1, anonymousUsers: 2
+}, {
+    id: "2", createdAt: Date, title: "second", content: "string", registeredUsers: 3, anonymousUsers: 4
+}, {
+    id: "3", createdAt: Date, title: "second", content: "string", registeredUsers: 3, anonymousUsers: 4
+}]
+
+const page: Page = {
+    currentPage: 1, totalPages: 2, contentOnPage: 2, totalContent: 3, content: nts,
+}
 
 export const User = () => {
     const notes: Array<Note> = nts;
@@ -50,6 +35,10 @@ export const User = () => {
         return count;
     }
 
+    const handlePageChange = (newPage: number) => {
+        navigate(`/album/${newPage}`);
+    };
+
     return (
         <div className={"container"}>
             <div className={"row"}>
@@ -59,33 +48,45 @@ export const User = () => {
                     <p>Просмотров: {countViews()}</p>
                 </div>
                 <div className={"col-md-9"}>
-                    {notes.length > 0 ? (
-                        <div className={"container-fluid"}>
+                    {notes.length > 0 ? (<div className={"container-fluid"}>
                             <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-                                {notes.map((note) => (
-                                    <div id={note.id}
-                                         className="col"
-                                         key={note.id}
-                                         onClick={() => {
-                                             navigate(`/note/${note.id}`)
-                                         }}
-                                        >
-                                        <div className={"card mb-3 text card-cur"}>
-                                            <div className="card-header back-header">
-                                                <div>
-                                                    <IoMdEye/>
-                                                    {" "}{note.registeredUsers + note.anonymousUsers}
-                                                </div>
-                                                {note.createdAt}
+                                {notes.map((note) => (<div id={note.id}
+                                                           className="col"
+                                                           key={note.id}
+                                                           onClick={() => {
+                                                               navigate(`/note/${note.id}`)
+                                                           }}
+                                >
+                                    <div className={"card mb-3 text card-cur"}>
+                                        <div className="card-header back-header">
+                                            <div>
+                                                <IoMdEye/>
+                                                {" "}{note.registeredUsers + note.anonymousUsers}
                                             </div>
-                                            <div className={"card-body back-body"}>
-                                                <h2 className={"card-title"}>{note.title}</h2>
-                                                <p className={"card-text"}>{note.content}</p>
-                                            </div>
+                                            {note.createdAt}
+                                        </div>
+                                        <div className={"card-body back-body"}>
+                                            <h2 className={"card-title"}>{note.title}</h2>
+                                            <p className={"card-text"}>{note.content}</p>
                                         </div>
                                     </div>
-                                ))}
+                                </div>))}
                             </div>
+                            {page.totalPages > 1 && (
+                                <div className="pagination toolbar"
+                                     style={{justifyContent: "center", marginTop: "1rem"}}>
+                                    <button className="button button_secondary" disabled={page.currentPage === 1}
+                                            onClick={() => handlePageChange(page.currentPage - 1)}>Previous
+                                    </button>
+                                    <span
+                                        style={{alignSelf: "center"}}>Page {page.currentPage} of {page.totalPages}
+                            </span>
+                                    <button className="button button_secondary"
+                                            disabled={page.currentPage === page.totalPages}
+                                            onClick={() => handlePageChange(page.currentPage + 1)}>Next
+                                    </button>
+                                </div>
+                            )}
                             <div className={"d-flex justify-content-center"}>
                                 <a className={"btn btn-primary"}
                                    href={"/"}
