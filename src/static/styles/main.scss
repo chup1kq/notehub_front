@@ -698,3 +698,56 @@ button.auth {
     margin-top: 0;
   }
 }
+
+.card-cur {
+  cursor: pointer;
+}
+
+.note-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.note-buttons .btn {
+  flex: 1;
+  text-align: center;
+}
+
+.header-right .d-flex {
+  align-items: center !important;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.button_primary {
+  background: rgb(var(--primary));
+  color: rgb(255, 255, 255);
+}
+
+.button_primary:hover {
+  opacity: 0.8;
+}
+
+.button_secondary {
+  border: 2px solid var(--themeMain);
+  background: transparent;
+  color: var(--themeMain) !important;
+
+  &:hover {
+    background-color: var(--secondary-hover-color);
+    color: var(--themeAlt);
+  }
+}
