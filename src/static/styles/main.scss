@@ -628,3 +628,20 @@ button.auth {
 
 .hide-sm { display: flex; }
 .show-sm { display: none; }
+
+.user-info {
+  margin-bottom: 1.5rem;
+
+  p {
+    margin-bottom: 0 !important;
+  }
+}
+
+.back-header {
+  background: rgb(var(--navbarBackground));
+}
+
+.back-body {
+  background: rgb(var(--background));
+}
+
