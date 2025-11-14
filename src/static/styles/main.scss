@@ -1,5 +1,11 @@
 @import url('./variables.css');
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   background: rgba(var(--background));
   margin: 0;
@@ -8,7 +14,77 @@ body {
 }
 
 .navbar {
-  background: rgba(var(--navbarBackground));
-  margin-bottom: 1.3rem;
-  padding: 1rem;
+  width: 100%;
+  background: rgb(var(--navbarBackground));
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  text-decoration: none;
+  margin-right: auto;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.searchBar {
+  max-width: 450px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 10px;
+}
+
+.icon {
+  color: rgba(var(--themeMain));
+  font-size: 20px;
+  padding: 0;
+  margin-right: 10px;
+
+  &.active {
+    cursor: pointer;
+    transition: color 0.5s ease;
+
+    &.theme:hover {
+      color: rgba(var(--themeAlt));
+    }
+  }
+}
+
+.text {
+  color: rgba(var(--text));
+}
+
+.note-container {
+  display: flex;
+  align-items: start;
+  justify-content: center;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 30px;
+}
+
+.note-settings-container {
+  padding: 0 0 0 16px;
+  position: relative;
+  justify-content: center;
+
+  .btn {
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+.note-settings {
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.settings-label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  color: rgba(var(--text));
 }
