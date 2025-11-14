@@ -33,4 +33,4 @@ export const SearchBar = ({ onSearch, doSearch, text }) => {
             />
         </div>
     );
-};
+}

@@ -21,4 +21,4 @@ export const PasswordInput = ({value, onChange, placeholder, className = ""}) =>
             </span>
         </div>
     );
-};
+}
