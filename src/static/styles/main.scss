@@ -799,3 +799,72 @@ button.auth {
   cursor: pointer;
   padding: 0;
 }
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.container-fluid {
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.row {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+}
+
+.row > * {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.col-md-3,
+.col-md-9,
+.col {
+  flex: 1 0 0;
+}
+
+@media (min-width: 768px) {
+  .col-md-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+  .col-md-9 {
+    flex: 0 0 75%;
+    max-width: 75%;
+  }
+}
+
+.row-cols-1 > * {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .row-cols-md-2 > * {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+@media (min-width: 992px) {
+  .row-cols-lg-3 > * {
+    flex: 0 0 33.333%;
+    max-width: 33.333%;
+  }
+}
+
+.g-3 > * {
+  margin-bottom: 1rem;
+}
+
+.d-flex { display: flex; }
+.justify-content-center { justify-content: center; }
+.text-center { text-align: center; }
