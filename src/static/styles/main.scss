@@ -84,6 +84,12 @@ body {
   }
 }
 
+.note-create-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 .note-settings {
   margin-bottom: 25px;
   position: relative;

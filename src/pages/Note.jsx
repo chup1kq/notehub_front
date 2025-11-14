@@ -105,13 +105,15 @@ export const Note = () => {
                         )}
                     </div>
                 )}
-                <button
-                    className="button button_primary align-self-center"
-                    style={{ textAlign: "center" }}
-                    onClick={createNote}
-                >
-                    Создать
-                </button>
+                <div className="note-create-wrapper">
+                    <button
+                        className="button button_primary align-self-center"
+                        style={{textAlign: "center"}}
+                        onClick={createNote}
+                    >
+                        Создать
+                    </button>
+                </div>
             </div>
         </div>
     );
