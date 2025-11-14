@@ -1,36 +1,36 @@
-import React, {useState} from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import {CiSearch} from "react-icons/ci";
+import React, { useState } from "react";
+import { CiSearch } from "react-icons/ci";
 
-export const SearchBar = ({onSearch, doSearch, text}) => {
+export const SearchBar = ({ onSearch, doSearch, text }) => {
     const [inputValue, setInputValue] = useState("");
 
     const handleInputChange = (event) => {
         const value = event.target.value;
         setInputValue(value);
-        onSearch(event.target.value);
+        onSearch(value);
     };
 
     const makeSearch = () => {
-        doSearch(inputValue)
+        doSearch(inputValue);
     };
 
     return (
-        <div className="input-group rounded align-items-center searchBar">
-            <input id='NoteHubSearchBar'
-                   type="search"
-                   className="form-control rounded me-2"
-                   placeholder={text}
-                   aria-label="Search"
-                   aria-describedby="search-addon"
-                   onChange={handleInputChange}
-                   onKeyDown={(e) => {
-                       if (e.key === "Enter") {
-                           makeSearch();
-                       }
-                   }}/>
-            <CiSearch className={"icon active"}
-                      onClick={makeSearch}/>
+        <div className="searchbar">
+            <input
+                id="NoteHubSearchBar"
+                type="search"
+                className="searchbar-input"
+                placeholder={text}
+                onChange={handleInputChange}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter") makeSearch();
+                }}
+            />
+
+            <CiSearch
+                className="searchbar-icon"
+                onClick={makeSearch}
+            />
         </div>
     );
-}
+};
