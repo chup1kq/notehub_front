@@ -7,7 +7,7 @@ import {GiHamburgerMenu} from "react-icons/gi";
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import {useNavigate} from "react-router-dom";
 
-import {SearchBar} from "./blocks/SearchBar";
+import {SearchBar} from "./SearchBar";
 import {useTheme} from "../hooks/useTheme";
 
 export const Header = () => {
@@ -55,9 +55,8 @@ export const Header = () => {
                                     <a href="/register" className="auth text d-none d-sm-inline">Зарегистрироваться</a>
                                 </>
                             ) : (
-                                <div className="d-flex align-items-center d-none d-sm-flex">
-                                    <a href={'/account'} className="auth text me-2"
-                                       style={{fontSize: '20px', lineHeight: '1'}}>
+                                <div className="d-flex d-none d-sm-flex align-items-center">
+                                    <a href={'/account'} className="auth text me-2">
                                         {user}
                                     </a>
                                     <button type="button" onClick={logout} className="auth">
