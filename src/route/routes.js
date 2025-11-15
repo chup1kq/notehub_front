@@ -8,10 +8,6 @@ import {EditNote} from "../pages/EditNote";
 export const AppRoutes = () => {
     return useRoutes([
         {
-            path: '*',
-            element: <NotFound />,
-        },
-        {
             path: '/',
             element: <Note />
         },
@@ -30,6 +26,10 @@ export const AppRoutes = () => {
         {
             path: '/note/:id',
             element: <EditNote />
+        },
+        {
+            path: '*',
+            element: <NotFound />,
         }
     ]);
 }
