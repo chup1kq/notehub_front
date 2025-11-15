@@ -1,6 +1,8 @@
 import {NoteArea} from "../components/NoteArea";
 import {useState, useRef, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
+import {createNote} from "../core/api";
+import {useAuth} from "../context/AuthContext";
 
 const DeleteType = {
     default: "Default",
@@ -8,13 +10,21 @@ const DeleteType = {
     burnAfterTime: "Burn after time"
 };
 
+const deleteTypeToExpirationTypeMap: Record<string, ExpirationType> = {
+    [DeleteType.default]: "NEVER",
+    [DeleteType.burnAfterRead]: "BURN_AFTER_READ",
+    [DeleteType.burnAfterTime]: "BURN_AFTER_TIME",
+};
+
 export const Note = () => {
     const [noteType, setNoteType] = useState(DeleteType.default);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [selectedDateTime, setSelectedDateTime] = useState("");
+    const [title, setTitle] = useState("");
     const [noteContent, setNoteContent] = useState("");
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
+    const {token} = useAuth();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -37,17 +47,37 @@ export const Note = () => {
 
     const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
-    const createNote = () => {
-        const id = 1;
-        navigate(`/notes/${id}`);
+    const handleCreateNote = async () => {
+        const newNote: Note = {
+            title: title,
+            content: noteContent,
+            expirationType: deleteTypeToExpirationTypeMap[noteType],
+            expirationPeriod: noteType === DeleteType.burnAfterTime ? selectedDateTime : null
+        }
+
+        try {
+            const responseUrl = await createNote(newNote, token);
+            navigate(`/note/${responseUrl}`);
+        } catch (error) {
+            alert(error.message);
+        }
     };
 
     return (
         <div className="note-container">
-            <NoteArea
-                content={noteContent}
-                onContentChange={setNoteContent}
-            />
+            <div className={"col-note"}>
+                <input
+                    type="text"
+                    className="note-area note-title-input"
+                    placeholder="Введите заголовок заметки"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
+                <NoteArea
+                    content={noteContent}
+                    onContentChange={setNoteContent}
+                />
+            </div>
             <div className="note-settings-container">
                 <div className="note-settings" id="note-settings">
                     <label className="text settings-label">Тип удаления</label>
@@ -109,7 +139,7 @@ export const Note = () => {
                     <button
                         className="button button_primary align-self-center"
                         style={{textAlign: "center"}}
-                        onClick={createNote}
+                        onClick={handleCreateNote}
                     >
                         Создать
                     </button>

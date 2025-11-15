@@ -834,6 +834,13 @@ button.auth {
   padding-right: 0.5rem;
 }
 
+.col-note {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  max-width: 800px;
+}
+
 .col-md-3,
 .col-md-9,
 .col {
@@ -1013,4 +1020,10 @@ button.auth {
       max-width: 90%;
     }
   }
+}
+
+.note-title-input {
+  display: flex;
+  margin-bottom: 16px;
+  min-height: 50px;
 }
