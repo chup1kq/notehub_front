@@ -1,7 +1,8 @@
 type ExpirationType =
-    | "Default"
-    | "Burn after read"
-    | "Burn after time";
+    | "DEFAULT"
+    | "BURN_AFTER_READ"
+    | "BURN_AFTER_TIME";
+
 
 type Page = {
     currentPage: number;
@@ -12,12 +13,19 @@ type Page = {
 }
 
 type Note = {
-    id: string;
-    createdAt: Date;
+        id: string;
+        createdAt: Date;
+        title: string;
+        expirationType: ExpirationType;
+        expirationPeriod: string;
+        content: string;
+        registeredUsers: number;
+        anonymousUsers: number;
+}
+
+type NoteCreate = {
     title: string;
-    expirationType: ExpirationType;
-    expirationPeriod: string;
     content: string;
-    registeredUsers: number;
-    anonymousUsers: number;
+    expirationType: ExpirationType;
+    expirationPeriod?: string | null;
 }
