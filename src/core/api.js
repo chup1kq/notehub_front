@@ -1,17 +1,111 @@
-export async function getNote(url: string){
+import {Note} from "../pages/Note";
 
+export async function getNote(url: string, token: string | null) {
+    try {
+        console.log("Sending request with token:", token);
+
+        const response = await fetch(`http://localhost:8080/api/v1/note/${url}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem("token")}`
+            },
+        });
+
+        if (response.ok) {
+            return await response.json();
+        } else if (response.status === 401) {
+            throw new Error("Неавторизованный доступ. Пожалуйста, войдите в систему.");
+        } else if (response.status === 404) {
+            throw new Error("Заметка не найдена.");
+        } else {
+            throw new Error(`Ошибка сервера: ${response.status}`);
+        }
+    } catch (error) {
+        throw new Error(error.message);
+    }
 }
 
-export async function getNotes(login: string, page: number) {
+export async function getNotes(token: string) {
+    try {
+        const response = await fetch("http://localhost:8080/api/v1/note/list/me", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
+        if (!response.ok) {
+            throw new Error(`Ошибка загрузки заметок: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // получаем только URL заметок
+        const urls = data.page.content.map(note => note.url);
+
+        // запрашиваем просмотры
+        const analyticsResponse = await fetch("http://localhost:8080/api/v1/analytics/view-notes", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ urls }),
+        });
+
+        const analytics = await analyticsResponse.json();
+
+        // Объединяем заметки и просмотры
+        const enrichedNotes = data.page.content.map(note => ({
+            ...note,
+            views: analytics[note.url]
+                ? analytics[note.url].userViews + analytics[note.url].anonymousViews
+                : 0
+        }));
+
+        return {
+            content: enrichedNotes,
+            totalPages: data.page.totalPages,
+            currentPage: data.page.page + 1,
+            totalElements: data.page.totalElements
+        };
+
+    } catch (error) {
+        console.error("Ошибка при запросе заметок:", error);
+        throw error;
+    }
 }
 
 export async function deleteNote(url: string) {
 
 }
 
-export async function addNote(note: Note) {
+export async function createNote(note: NoteCreate, token: string | null) {
+    try {
+        const response = await fetch('http://localhost:8080/api/v1/note', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                title: note.title,
+                content: note.content,
+                expirationType: note.expirationType,
+                expirationPeriod: note.expirationType === 'BURN_BY_PERIOD' ? new Date(note.expirationPeriod) : null,
+            }),
+        });
 
+        if (response.status === 200) {
+            alert('Заметка успешно создана!');
+            return await response.json();
+        }
+    } catch (error) {
+        console.error("Ошибка при запросе заметок:", error);
+    }
 }
 
 export async function updateNote(note: Note) {
