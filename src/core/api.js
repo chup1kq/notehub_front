@@ -108,8 +108,44 @@ export async function createNote(note: NoteCreate, token: string | null) {
     }
 }
 
-export async function updateNote(note: Note) {
+export async function updateNote(note: Note, token: string) {
+    if (note.expirationType === "BURN_AFTER_TIME" && !note.expirationPeriod) {
+        throw new Error("Пожалуйста, укажите время для Burn by period.");
+    }
 
+    try {
+        const response = await fetch(`http://localhost:8080/api/v1/note/${note.url}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                title: note.title,
+                content: note.content,
+                expirationType: note.expirationType,
+                expirationPeriod:
+                    note.expirationType === "BURN_AFTER_TIME"
+                        ? new Date(note.expirationPeriod).getTime()
+                        : null,
+            }),
+        });
+
+        if (response.status === 200) {
+            const updatedNote = await response.json();
+            return updatedNote;
+        } else if (response.status === 400) {
+            throw new Error("Недопустимые символы в заголовке. Используйте только английские буквы и цифры.");
+        } else if (response.status === 403) {
+            throw new Error("Недостаточно прав на редактирование заметки");
+        } else {
+            const errorData = await response.json();
+            throw new Error(`Ошибка при сохранении изменений: ${errorData.message}`);
+        }
+    } catch (err) {
+        console.error("Ошибка при обновлении заметки:", err);
+        throw err;
+    }
 }
 
 export async function authentication(user: string, password: string) {

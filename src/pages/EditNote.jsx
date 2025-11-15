@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 import {NoteArea} from "../components/NoteArea";
-import {getNote} from "../core/api";
+import {getNote, updateNote} from "../core/api";
 import {useParams} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
 
@@ -75,8 +75,35 @@ export const EditNote = () => {
     };
 
     const saveNote = async () => {
+        if (noteType === DeleteType.burnAfterTime && !selectedDateTime) {
+            alert("Пожалуйста, укажите дату и время удаления.");
+            return;
+        }
 
-    }
+        const noteToUpdate: Note = {
+            url: id,
+            title,
+            content: noteContent,
+            expirationType: deleteTypeToExpirationTypeMap[noteType],
+            expirationPeriod: selectedDateTime ? new Date(selectedDateTime).getTime() : null,
+        };
+
+        try {
+            const updatedNote = await updateNote(noteToUpdate, token);
+            setTitle(updatedNote.title);
+            setNoteContent(updatedNote.content);
+            setNoteType(expirationTypeToDeleteTypeMap[updatedNote.expirationType] || DeleteType.default);
+            if (updatedNote.expirationPeriod) {
+                setSelectedDateTime(new Date(updatedNote.expirationPeriod).toISOString().slice(0, 16));
+            } else {
+                setSelectedDateTime("");
+            }
+            setEditMode(false);
+            alert("Изменения успешно сохранены");
+        } catch (error) {
+            alert(error.message);
+        }
+    };
 
     const deleteNote = async () => {
 
@@ -85,6 +112,7 @@ export const EditNote = () => {
     const cancelNote = () => {
         setIsDropdownOpen(false);
         setEditMode(false);
+        window.location.reload();
     }
 
     const handleDateTimeChange = (e) => {
