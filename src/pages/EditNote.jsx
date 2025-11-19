@@ -3,6 +3,7 @@ import {NoteArea} from "../components/NoteArea";
 import {deleteNote, getNote, updateNote} from "../core/api";
 import {useNavigate, useParams} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
+import { SimpleModal } from "../components/modals/SimpleModal";
 
 const DeleteType = {
     default: "Default",
@@ -10,13 +11,13 @@ const DeleteType = {
     burnAfterTime: "Burn after time"
 }
 
-const expirationTypeToDeleteTypeMap: Record<string, string> = {
+const expirationTypeToDeleteTypeMap = {
     "NEVER": DeleteType.default,
     "BURN_AFTER_READ": DeleteType.burnAfterRead,
     "BURN_AFTER_TIME": DeleteType.burnAfterTime,
 };
 
-const deleteTypeToExpirationTypeMap: Record<string, ExpirationType> = {
+const deleteTypeToExpirationTypeMap = {
     [DeleteType.default]: "NEVER",
     [DeleteType.burnAfterRead]: "BURN_AFTER_READ",
     [DeleteType.burnAfterTime]: "BURN_AFTER_TIME",
@@ -30,8 +31,13 @@ export const EditNote = () => {
     const [title, setTitle] = useState("");
     const [noteContent, setNoteContent] = useState("");
     const [editMode, setEditMode] = useState(false);
-    const { token } = useAuth();
 
+    const [modal, setModal] = useState({
+        show: false,
+        message: ""
+    });
+
+    const { token } = useAuth();
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
 
@@ -39,32 +45,34 @@ export const EditNote = () => {
         if (!token) return;
 
         const fetchNote = async () => {
-            try {
-                const note = await getNote(id, token);
+            const result = await getNote(id, token);
 
-                console.log(note);
-
-                setTitle(note.title);
-                setNoteContent(note.content);
-
-                const mappedNoteType = expirationTypeToDeleteTypeMap[note.expirationType] || DeleteType.default;
-                setNoteType(mappedNoteType);
-
-                if (note.expirationPeriod) {
-                    const date = new Date(note.expirationPeriod);
-                    if (!isNaN(date.getTime())) {
-                        setSelectedDateTime(date.toISOString().slice(0, 16));
-                    }
-                } else {
-                    setSelectedDateTime("");
-                }
-            } catch (error) {
-                alert(error.message);
+            if (!result.ok) {
+                setModal({ show: true, message: result.error });
+                return;
             }
-        }
 
-        void fetchNote();
+            const note = result.data;
+
+            setTitle(note.title);
+            setNoteContent(note.content);
+
+            const mappedNoteType = expirationTypeToDeleteTypeMap[note.expirationType] || DeleteType.default;
+            setNoteType(mappedNoteType);
+
+            if (note.expirationPeriod) {
+                const date = new Date(note.expirationPeriod);
+                if (!isNaN(date.getTime())) {
+                    setSelectedDateTime(date.toISOString().slice(0, 16));
+                }
+            } else {
+                setSelectedDateTime("");
+            }
+        };
+
+        fetchNote();
     }, [id, token]);
+
 
     const handleTypeSelect = (type) => {
         setNoteType(type);
@@ -77,11 +85,11 @@ export const EditNote = () => {
 
     const saveNote = async () => {
         if (noteType === DeleteType.burnAfterTime && !selectedDateTime) {
-            alert("Пожалуйста, укажите дату и время удаления.");
+            setModal({ show: true, message: "Пожалуйста, укажите дату и время удаления." });
             return;
         }
 
-        const noteToUpdate: Note = {
+        const noteToUpdate = {
             url: id,
             title,
             content: noteContent,
@@ -91,26 +99,32 @@ export const EditNote = () => {
 
         try {
             const updatedNote = await updateNote(noteToUpdate, token);
+
             setTitle(updatedNote.title);
             setNoteContent(updatedNote.content);
             setNoteType(expirationTypeToDeleteTypeMap[updatedNote.expirationType] || DeleteType.default);
+
             if (updatedNote.expirationPeriod) {
                 setSelectedDateTime(new Date(updatedNote.expirationPeriod).toISOString().slice(0, 16));
             } else {
                 setSelectedDateTime("");
             }
+
             setEditMode(false);
-            alert("Изменения успешно сохранены");
+
+            setModal({ show: true, message: "Изменения успешно сохранены" });
+
         } catch (error) {
-            alert(error.message);
+            setModal({ show: true, message: error.message });
         }
     };
+
 
     const handleDeleteNote = async () => {
         if (!token) return;
 
         await deleteNote(id, token);
-        navigate("/create");
+        navigate("/account");
     };
 
     const cancelNote = () => {
@@ -145,6 +159,7 @@ export const EditNote = () => {
                         disabled={!editMode}
                     />
                 </div>
+
                 <div className={"note-settings-container"}>
                     <div className={"note-settings"} id={"note-settings"}>
                         <label className={"text settings-label"}>Тип удаления</label>
@@ -162,12 +177,9 @@ export const EditNote = () => {
                                     ▼
                                 </span>
                             </button>
+
                             {isDropdownOpen && (
-                                <div
-                                    className={"dropdown-menu"}
-                                    role="listbox"
-                                    aria-labelledby="dropdown-trigger"
-                                >
+                                <div className={"dropdown-menu"} role="listbox">
                                     {Object.values(DeleteType).map((type) => (
                                         <button
                                             key={type}
@@ -184,16 +196,17 @@ export const EditNote = () => {
                             )}
                         </div>
                     </div>
+
                     {noteType === DeleteType.burnAfterTime && (
-                        <div className={"time-settings"} id={"time-settings"}>
+                        <div className={"time-settings"}>
                             <label className={"text settings-label"}>Дата и время удаления</label>
                             <input
                                 type="datetime-local"
                                 className={"datetime-input"}
-
                                 value={selectedDateTime}
                                 onChange={handleDateTimeChange}
                                 min={new Date().toISOString().slice(0, 16)}
+                                disabled={!editMode}
                             />
                             {selectedDateTime && (
                                 <div className={"datetime-preview text"}>
@@ -202,37 +215,34 @@ export const EditNote = () => {
                             )}
                         </div>
                     )}
+
                     {!editMode ? (
                         <div className="note-buttons">
-                            <button className="btn btn-primary"
-                                    onClick={() => {
-                                        setEditMode(!editMode);
-                                    }}
-                            >
+                            <button className="btn btn-primary" onClick={() => setEditMode(true)}>
                                 Редактировать
                             </button>
-                            <button className="btn btn-secondary"
-                                    onClick={handleDeleteNote}
-                            >
+                            <button className="btn btn-secondary" onClick={handleDeleteNote}>
                                 Удалить
                             </button>
                         </div>
                     ) : (
                         <div className="note-buttons">
-                            <button className="btn btn-primary"
-                                    onClick={saveNote}
-                            >
+                            <button className="btn btn-primary" onClick={saveNote}>
                                 Сохранить
                             </button>
-                            <button className="btn btn-secondary"
-                                    onClick={cancelNote}
-                            >
+                            <button className="btn btn-secondary" onClick={cancelNote}>
                                 Отмена
                             </button>
                         </div>
                     )}
                 </div>
             </div>
+
+            <SimpleModal
+                show={modal.show}
+                message={modal.message}
+                onClose={() => setModal({ ...modal, show: false })}
+            />
         </>
     );
-}
+};

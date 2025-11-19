@@ -1,64 +1,69 @@
 import {Note} from "../pages/Note";
 
-export async function getNote(url: string, token: string | null) {
-    try {
-        console.log("Sending request with token:", token);
+export async function getNote(url, token) {
+    console.log("Sending request with token:", token);
 
+    try {
         const response = await fetch(`http://localhost:8080/api/v1/note/${url}`, {
-            method: 'GET',
+            method: "GET",
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem("token")}`
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
             },
         });
 
         if (response.ok) {
-            return await response.json();
-        } else if (response.status === 401) {
-            throw new Error("Неавторизованный доступ. Пожалуйста, войдите в систему.");
-        } else if (response.status === 404) {
-            throw new Error("Заметка не найдена.");
-        } else {
-            throw new Error(`Ошибка сервера: ${response.status}`);
+            return { ok: true, data: await response.json() };
         }
-    } catch (error) {
-        throw new Error(error.message);
+
+        if (response.status === 401) {
+            return { ok: false, error: "Неавторизованный доступ. Пожалуйста, войдите в систему." };
+        }
+
+        if (response.status === 404) {
+            return { ok: false, error: "Заметка не найдена." };
+        }
+
+        return { ok: false, error: `Ошибка сервера: ${response.status}` };
+
+    } catch (err) {
+        return { ok: false, error: "Ошибка соединения с сервером" };
     }
 }
 
-export async function getNotes(token: string) {
+export async function getNotes(token) {
     try {
         const response = await fetch("http://localhost:8080/api/v1/note/list/me", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                "Authorization": `Bearer ${token}`,
             },
             credentials: "include"
         });
 
         if (!response.ok) {
-            throw new Error(`Ошибка загрузки заметок: ${response.status}`);
+            if (response.status === 401) {
+                return { ok: false, error: "Неавторизованный доступ" };
+            }
+            return { ok: false, error: `Ошибка загрузки заметок: ${response.status}` };
         }
 
         const data = await response.json();
+        const urls = data.page.content.map(n => n.url);
 
-        // получаем только URL заметок
-        const urls = data.page.content.map(note => note.url);
-
-        // запрашиваем просмотры
+        // запрос просмотров
         const analyticsResponse = await fetch("http://localhost:8080/api/v1/analytics/view-notes", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                "Authorization": `Bearer ${token}`,
             },
             body: JSON.stringify({ urls }),
         });
 
-        const analytics = await analyticsResponse.json();
+        const analytics = analyticsResponse.ok ? await analyticsResponse.json() : {};
 
-        // Объединяем заметки и просмотры
         const enrichedNotes = data.page.content.map(note => ({
             ...note,
             views: analytics[note.url]
@@ -67,19 +72,21 @@ export async function getNotes(token: string) {
         }));
 
         return {
-            content: enrichedNotes,
-            totalPages: data.page.totalPages,
-            currentPage: data.page.page + 1,
-            totalElements: data.page.totalElements
+            ok: true,
+            data: {
+                content: enrichedNotes,
+                totalPages: data.page.totalPages,
+                currentPage: data.page.page + 1,
+                totalElements: data.page.totalElements
+            }
         };
 
     } catch (error) {
-        console.error("Ошибка при запросе заметок:", error);
-        throw error;
+        return { ok: false, error: "Ошибка соединения с сервером" };
     }
 }
 
-export async function deleteNote(url: string, token: string): Promise<void> {
+export async function deleteNote(url, token) {
     try {
         const response = await fetch(`http://localhost:8080/api/v1/note/${url}`, {
             method: "PATCH",
@@ -91,20 +98,22 @@ export async function deleteNote(url: string, token: string): Promise<void> {
         });
 
         if (response.status === 204) {
-            alert("Заметка успешно удалена");
-        } else if (response.status === 403) {
-            alert("Недостаточно прав на удаление заметки");
-        } else {
-            const errorData = await response.json();
-            alert(`Ошибка при удалении заметки: ${errorData.message}`);
+            return { ok: true };
         }
+
+        if (response.status === 403) {
+            return { ok: false, error: "Недостаточно прав для удаления заметки" };
+        }
+
+        const err = await response.json();
+        return { ok: false, error: err.message || "Ошибка при удалении заметки" };
+
     } catch (error) {
-        console.error("Ошибка при удалении заметки:", error);
-        alert("Произошла ошибка при удалении заметки");
+        return { ok: false, error: "Ошибка соединения с сервером" };
     }
 }
 
-export async function createNote(note: NoteCreate, token: string | null) {
+export async function createNote(note, token) {
     try {
         const response = await fetch('http://localhost:8080/api/v1/note', {
             method: 'POST',
@@ -117,22 +126,31 @@ export async function createNote(note: NoteCreate, token: string | null) {
                 title: note.title,
                 content: note.content,
                 expirationType: note.expirationType,
-                expirationPeriod: note.expirationType === 'BURN_BY_PERIOD' ? new Date(note.expirationPeriod) : null,
+                expirationPeriod:
+                    note.expirationType === 'BURN_BY_PERIOD'
+                        ? new Date(note.expirationPeriod)
+                        : null,
             }),
         });
 
         if (response.status === 200) {
-            alert('Заметка успешно создана!');
-            return await response.json();
+            return { ok: true, data: await response.json() };
         }
+
+        if (response.status === 400) {
+            return { ok: false, error: "Неверные данные" };
+        }
+
+        return { ok: false, error: `Ошибка сервера: ${response.status}` };
+
     } catch (error) {
-        console.error("Ошибка при запросе заметок:", error);
+        return { ok: false, error: "Ошибка соединения с сервером" };
     }
 }
 
-export async function updateNote(note: Note, token: string) {
+export async function updateNote(note, token) {
     if (note.expirationType === "BURN_AFTER_TIME" && !note.expirationPeriod) {
-        throw new Error("Пожалуйста, укажите время для Burn by period.");
+        return { ok: false, error: "Укажите время для Burn by period" };
     }
 
     try {
@@ -140,7 +158,7 @@ export async function updateNote(note: Note, token: string) {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                "Authorization": `Bearer ${token}`,
             },
             body: JSON.stringify({
                 title: note.title,
@@ -154,59 +172,69 @@ export async function updateNote(note: Note, token: string) {
         });
 
         if (response.status === 200) {
-            const updatedNote = await response.json();
-            return updatedNote;
-        } else if (response.status === 400) {
-            throw new Error("Недопустимые символы в заголовке. Используйте только английские буквы и цифры.");
-        } else if (response.status === 403) {
-            throw new Error("Недостаточно прав на редактирование заметки");
-        } else {
-            const errorData = await response.json();
-            throw new Error(`Ошибка при сохранении изменений: ${errorData.message}`);
+            return { ok: true, data: await response.json() };
         }
+
+        if (response.status === 400) {
+            return { ok: false, error: "Недопустимые символы в заголовке. Только английские буквы и цифры." };
+        }
+
+        if (response.status === 403) {
+            return { ok: false, error: "Недостаточно прав для редактирования" };
+        }
+
+        const err = await response.json();
+        return { ok: false, error: err.message || "Ошибка при сохранении изменений" };
+
     } catch (err) {
-        console.error("Ошибка при обновлении заметки:", err);
-        throw err;
+        return { ok: false, error: "Ошибка соединения с сервером" };
     }
 }
 
-export async function authentication(user: string, password: string) {
-    const response = await fetch('http://localhost:8081/api/v1/auth/login', {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({login: user, password: password}),
-    });
+export async function authentication(user, password) {
+    try {
+        const response = await fetch('http://localhost:8081/api/v1/auth/login', {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ login: user, password }),
+        });
 
-    if (response.ok) {
-        return await response.text();
-    } else {
-        throw new Error("Ошибка входа: проверьте логин и пароль.");
+        if (response.ok) {
+            const token = await response.text();
+            return { ok: true, data: token };
+        }
+
+        return { ok: false, error: "Ошибка входа: проверьте логин и пароль" };
+
+    } catch {
+        return { ok: false, error: "Ошибка соединения с сервером" };
     }
 }
 
-export async function register(user: string, password: string) {
-    const response = await fetch('http://localhost:8081/api/v1/user/register', {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({login: user, password: password}),
-    });
+export async function register(user, password) {
+    try {
+        const response = await fetch('http://localhost:8081/api/v1/user/register', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ login: user, password }),
+        });
 
-    if (response.ok) {
-        alert("Регистрация успешна!");
-        return await authentication(user, password);
-    } else if (response.status === 409) {
-        alert("Ошибка регистрации: пользователь с таким логином уже есть.")
-        throw new Error("Ошибка регистрации: пользователь с таким логином уже есть.");
-    } else {
-        alert("Ошибка регистрации: попробуйте ещё раз.");
-        throw new Error("Ошибка регистрации: попробуйте ещё раз.");
+        if (response.ok) {
+            return await authentication(user, password);
+        }
+
+        if (response.status === 409) {
+            return { ok: false, error: "Пользователь уже существует" };
+        }
+
+        return { ok: false, error: "Ошибка регистрации" };
+
+    } catch {
+        return { ok: false, error: "Ошибка соединения с сервером" };
     }
 }
+
 
 export function logout() {
 

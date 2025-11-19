@@ -7,19 +7,22 @@ import {useAuth} from "../context/AuthContext";
 import {useTheme} from "../hooks/useTheme";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
+import {useConfirm} from "../hooks/useConfirm";
 
 export const Header = () => {
     const {token, user, setUser, setToken} = useAuth();
     const {theme, toggleTheme} = useTheme();
     const navigate = useNavigate();
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const { confirm, modal: confirmModal } = useConfirm();
 
     const search = (url: string) => {
         navigate('/note/' + url);
     };
 
-    const logout = () => {
-        if (window.confirm("Вы уверены, что хотите выйти из аккаунта?")) {
+    const logout = async () => {
+        const result = await confirm("Вы уверены, что хотите выйти из аккаунта?");
+        if (result) {
             setUser(null);
             setToken(null);
             navigate('/login');
@@ -94,6 +97,8 @@ export const Header = () => {
                     )}
                 </div>
             </div>
+
+            {confirmModal}
         </>
     );
 }

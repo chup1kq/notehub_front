@@ -6,6 +6,7 @@
     --navbarBackground: 45, 55, 72;
     --themeAlt: 0, 0, 0;
     --themeMain: 255, 255, 255;
+    --modal: 143, 145, 151;
 }
 
 .light-theme {
@@ -16,4 +17,5 @@
     --navbarBackground: 240, 240, 240;
     --themeAlt: 255, 255, 255;
     --themeMain: 0, 0, 0;
+    --modal: 203, 205, 201;
 }
