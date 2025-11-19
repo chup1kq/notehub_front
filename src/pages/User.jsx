@@ -7,7 +7,7 @@ import {getNotes} from "../core/api";
 export const User = () => {
     const { user, token } = useAuth();
     const navigate = useNavigate();
-    const { page = 1 } = useParams(); // page из URL
+    const { page = 1 } = useParams();
     const [notesPage, setNotesPage] = useState(null);
 
     useEffect(() => {
@@ -34,7 +34,7 @@ export const User = () => {
         return <div className="text-center mt-5 text">Загрузка...</div>;
     }
 
-    const notes = notesPage.content;
+    const notes = notesPage.content.filter(note => note.available);
 
     const handlePageChange = (newPage) => {
         navigate(`/album/${newPage}`);

@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import {NoteArea} from "../components/NoteArea";
-import {getNote, updateNote} from "../core/api";
-import {useParams} from "react-router-dom";
+import {deleteNote, getNote, updateNote} from "../core/api";
+import {useNavigate, useParams} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
 
 const DeleteType = {
@@ -33,6 +33,7 @@ export const EditNote = () => {
     const { token } = useAuth();
 
     const dropdownRef = useRef(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!token) return;
@@ -105,9 +106,12 @@ export const EditNote = () => {
         }
     };
 
-    const deleteNote = async () => {
+    const handleDeleteNote = async () => {
+        if (!token) return;
 
-    }
+        await deleteNote(id, token);
+        navigate("/create");
+    };
 
     const cancelNote = () => {
         setIsDropdownOpen(false);
@@ -208,7 +212,7 @@ export const EditNote = () => {
                                 Редактировать
                             </button>
                             <button className="btn btn-secondary"
-                                    onClick={deleteNote}
+                                    onClick={handleDeleteNote}
                             >
                                 Удалить
                             </button>

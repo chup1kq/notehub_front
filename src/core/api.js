@@ -34,6 +34,7 @@ export async function getNotes(token: string) {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
             },
+            credentials: "include"
         });
 
         if (!response.ok) {
@@ -78,8 +79,29 @@ export async function getNotes(token: string) {
     }
 }
 
-export async function deleteNote(url: string) {
+export async function deleteNote(url: string, token: string): Promise<void> {
+    try {
+        const response = await fetch(`http://localhost:8080/api/v1/note/${url}`, {
+            method: "PATCH",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
 
+        if (response.status === 204) {
+            alert("Заметка успешно удалена");
+        } else if (response.status === 403) {
+            alert("Недостаточно прав на удаление заметки");
+        } else {
+            const errorData = await response.json();
+            alert(`Ошибка при удалении заметки: ${errorData.message}`);
+        }
+    } catch (error) {
+        console.error("Ошибка при удалении заметки:", error);
+        alert("Произошла ошибка при удалении заметки");
+    }
 }
 
 export async function createNote(note: NoteCreate, token: string | null) {
@@ -154,6 +176,7 @@ export async function authentication(user: string, password: string) {
         headers: {
             "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({login: user, password: password}),
     });
 
@@ -175,7 +198,7 @@ export async function register(user: string, password: string) {
 
     if (response.ok) {
         alert("Регистрация успешна!");
-        return await response.text();
+        return await authentication(user, password);
     } else if (response.status === 409) {
         alert("Ошибка регистрации: пользователь с таким логином уже есть.")
         throw new Error("Ошибка регистрации: пользователь с таким логином уже есть.");
