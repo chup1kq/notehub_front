@@ -8,6 +8,7 @@ import {useTheme} from "../hooks/useTheme";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {useConfirm} from "../hooks/useConfirm";
+import {LanguageSelector} from "./LanguageSelector";
 
 export const Header = () => {
     const {token, user, setUser, setToken} = useAuth();
@@ -42,6 +43,8 @@ export const Header = () => {
                             }} doSearch={search}/>
                         </div>
                         <div className="header-right">
+                            <LanguageSelector />
+
                             {theme === "light-theme" ? (
                                 <BsMoonFill className="icon theme active" onClick={toggleTheme}/>
                             ) : (
