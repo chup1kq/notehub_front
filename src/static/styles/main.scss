@@ -22,11 +22,11 @@ body {
 
 .navbar > .navbar-inner {
   width: 100%;
-  max-width: 90%; /* как твой .container */
-  padding: 1rem 0; /* чтобы не ломать ширину */
+  max-width: 90%;
+  padding: 1rem 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .logo {
@@ -626,7 +626,7 @@ button.auth {
   grid-template-columns: 1fr minmax(200px, 600px) 1fr;
   align-items: center;
   width: 100%;
-  max-width: 1300px;
+  max-width: 1400px;
 }
 
 .hide-sm { display: flex; }
