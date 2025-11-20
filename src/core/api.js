@@ -1,10 +1,11 @@
-import {Note} from "../pages/Note";
+const NoteApi = "http://localhost:8080/api/v1";
+const UserApi = "http://localhost:8081/api/v1";
 
 export async function getNote(url, token) {
     console.log("Sending request with token:", token);
 
     try {
-        const response = await fetch(`http://localhost:8080/api/v1/note/${url}`, {
+        const response = await fetch(`${NoteApi}/note/${url}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -33,7 +34,7 @@ export async function getNote(url, token) {
 
 export async function getNotes(token) {
     try {
-        const response = await fetch("http://localhost:8080/api/v1/note/list/me", {
+        const response = await fetch(`${NoteApi}/note/list/me`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -52,8 +53,7 @@ export async function getNotes(token) {
         const data = await response.json();
         const urls = data.page.content.map(n => n.url);
 
-        // запрос просмотров
-        const analyticsResponse = await fetch("http://localhost:8080/api/v1/analytics/view-notes", {
+        const analyticsResponse = await fetch(`${NoteApi}/analytics/view-notes`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -88,7 +88,7 @@ export async function getNotes(token) {
 
 export async function deleteNote(url, token) {
     try {
-        const response = await fetch(`http://localhost:8080/api/v1/note/${url}`, {
+        const response = await fetch(`${NoteApi}/note/${url}`, {
             method: "PATCH",
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -115,7 +115,7 @@ export async function deleteNote(url, token) {
 
 export async function createNote(note, token) {
     try {
-        const response = await fetch('http://localhost:8080/api/v1/note', {
+        const response = await fetch(`${NoteApi}/note`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -154,7 +154,7 @@ export async function updateNote(note, token) {
     }
 
     try {
-        const response = await fetch(`http://localhost:8080/api/v1/note/${note.url}`, {
+        const response = await fetch(`${NoteApi}/note/${note.url}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -193,7 +193,7 @@ export async function updateNote(note, token) {
 
 export async function authentication(user, password) {
     try {
-        const response = await fetch('http://localhost:8081/api/v1/auth/login', {
+        const response = await fetch(`${UserApi}/auth/login`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -214,7 +214,7 @@ export async function authentication(user, password) {
 
 export async function register(user, password) {
     try {
-        const response = await fetch('http://localhost:8081/api/v1/user/register', {
+        const response = await fetch(`${UserApi}/user/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ login: user, password }),
