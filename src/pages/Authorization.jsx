@@ -99,7 +99,7 @@ export const Authorization = () => {
             <div className="auth-page">
                 <div className="auth-container">
                     <div className="header">
-                        <a href="/src/static" className="auth-logo">NoteHub</a>
+                        <a href="/" className="auth-logo">NoteHub</a>
                         {theme === "light-theme" ? (
                             <BsMoonFill className={"icon active theme"} onClick={toggleTheme}/>
                         ) : (
