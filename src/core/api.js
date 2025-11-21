@@ -333,7 +333,7 @@ async function refresh(): Promise<RefreshTokenApi> {
 
     } catch (e) {
         await reLogin();
-        return { ok: false, error: "Ошибка соединения" };
+        return { ok: false, error: tApi("api.errors.connectionError") };
     }
 }
 

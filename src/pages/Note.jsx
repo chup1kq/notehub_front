@@ -18,6 +18,12 @@ const deleteTypeToExpirationTypeMap = {
     [DeleteType.burnAfterTime]: "BURN_AFTER_TIME",
 };
 
+const noteTypeToKey = {
+    [DeleteType.never]: 'never',
+    [DeleteType.burnAfterRead]: 'burnAfterRead',
+    [DeleteType.burnAfterTime]: 'burnAfterTime',
+};
+
 export const Note = () => {
     const [noteType, setNoteType] = useState(DeleteType.never);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -122,7 +128,7 @@ export const Note = () => {
                                             role="option"
                                             aria-selected={noteType === type}
                                         >
-                                            <span className="text">{t(`expiration.${type}`)}</span>
+                                            <span className="text">{t(`expiration.${noteTypeToKey[type]}`)}</span>
                                         </button>
                                     ))}
                                 </div>

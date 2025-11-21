@@ -25,6 +25,12 @@ const deleteTypeToExpirationTypeMap = {
     [DeleteType.burnAfterTime]: "BURN_AFTER_TIME",
 };
 
+const noteTypeToKey = {
+    [DeleteType.never]: 'never',
+    [DeleteType.burnAfterRead]: 'burnAfterRead',
+    [DeleteType.burnAfterTime]: 'burnAfterTime',
+};
+
 export const EditNote = () => {
     const {id} = useParams();
     const [noteType, setNoteType] = useState(DeleteType.never);
@@ -51,7 +57,7 @@ export const EditNote = () => {
             console.log(result.data);
             if (result.data.status === 404) {
                 if (result.data.properties.api_error_code === 100) {
-                    setModal({show: true, message: tApi("api.errors.unavailableNote")});
+                    setModal({show: true, message: t("api.errors.unavailableNote")});
                     return;
                 }
 
@@ -117,9 +123,9 @@ export const EditNote = () => {
             }
 
 
-            setTitle(updatedNote.title);
-            setNoteContent(updatedNote.content);
-            setNoteType(expirationTypeToDeleteTypeMap[updatedNote.expirationType] || DeleteType.never);
+            setTitle(noteToUpdate.title);
+            setNoteContent(noteToUpdate.content);
+            setNoteType(expirationTypeToDeleteTypeMap[noteToUpdate.expirationType] || DeleteType.never);
 
             if (updatedNote.expirationPeriod) {
                 setSelectedDateTime(new Date(updatedNote.expirationPeriod).toISOString().slice(0, 16));
@@ -184,7 +190,7 @@ export const EditNote = () => {
                                 aria-haspopup="listbox"
                                 disabled={!editMode}
                             >
-                                <span className={"text"}>{t(`expiration.${noteType}`)}</span>
+                                <span className="text">{t(`expiration.${noteTypeToKey[noteType]}`)}</span>
                                 <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>
                                     ▼
                                 </span>
@@ -195,13 +201,13 @@ export const EditNote = () => {
                                     {Object.values(DeleteType).map((type) => (
                                         <button
                                             key={type}
-                                            className={`dropdown-item ${noteType === type ? 'active' : ''}`}
+                                            className={`dropdown-item ${noteType === type ? "active" : ""}`}
                                             onClick={() => handleTypeSelect(type)}
                                             type="button"
                                             role="option"
                                             aria-selected={noteType === type}
                                         >
-                                            <span className={"text"}>{t(`expiration.${type}`)}</span>
+                                            <span className="text">{t(`expiration.${noteTypeToKey[type]}`)}</span>
                                         </button>
                                     ))}
                                 </div>
