@@ -9,23 +9,36 @@ import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {useConfirm} from "../hooks/useConfirm";
 import {LanguageSelector} from "./LanguageSelector";
+import {logout} from "../core/api";
+import {SimpleModal} from "./modals/SimpleModal";
 
 export const Header = () => {
-    const {token, user, setUser, setToken} = useAuth();
+    const {token, user } = useAuth();
     const {theme, toggleTheme} = useTheme();
     const navigate = useNavigate();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const { confirm, modal: confirmModal } = useConfirm();
 
+    const [modal, setModal] = useState({
+        show: false,
+        message: ""
+    });
+
     const search = (url: string) => {
         navigate('/note/' + url);
     };
 
-    const logout = async () => {
+    const handleLogout = async () => {
         const result = await confirm("Вы уверены, что хотите выйти из аккаунта?");
         if (result) {
-            setUser(null);
-            setToken(null);
+            const response = await logout();
+            if (!response.ok) {
+                setModal({
+                    show: true,
+                    message: response.error
+                });
+            }
+
             navigate('/login');
         }
     };
@@ -59,7 +72,7 @@ export const Header = () => {
                             ) : (
                                 <div className="user-block hide-sm">
                                     <a href="/account" className="auth text user-name">{user}</a>
-                                    <button type="button" onClick={logout} className="auth logout-btn">
+                                    <button type="button" onClick={handleLogout} className="auth logout-btn">
                                         <MdLogout className="icon"/>
                                     </button>
                                 </div>
@@ -90,7 +103,7 @@ export const Header = () => {
                     {user ? (
                         <>
                             <a href="/account">{user}</a>
-                            <button onClick={() => { logout(); setDrawerOpen(false); }}>Выйти</button>
+                            <button onClick={() => { handleLogout(); setDrawerOpen(false); }}>Выйти</button>
                         </>
                     ) : (
                         <>
@@ -102,6 +115,11 @@ export const Header = () => {
             </div>
 
             {confirmModal}
+            <SimpleModal
+                show={modal.show}
+                message={modal.message}
+                onClose={() => setModal({ ...modal, show: false })}
+            />
         </>
     );
 }
