@@ -5,6 +5,7 @@ import {createNote} from "../core/api";
 import {useAuth} from "../context/AuthContext";
 import { SimpleModal } from "../components/modals/SimpleModal";
 import { useTranslation } from "../hooks/useTranslation";
+import {convertTimeToDuration} from "../core/timeConverter";
 
 const DeleteType = {
     never: "never",
@@ -67,7 +68,7 @@ export const Note = () => {
             title: title,
             content: noteContent,
             expirationType: deleteTypeToExpirationTypeMap[noteType],
-            expirationPeriod: noteType === DeleteType.burnByPeriod ? selectedDateTime : null
+            expirationPeriod: noteType === DeleteType.burnByPeriod ? convertTimeToDuration(selectedDateTime) : null
         };
 
         const result = await createNote(newNote, token);

@@ -6,6 +6,7 @@ import {useAuth} from "../context/AuthContext";
 import {SimpleModal} from "../components/modals/SimpleModal";
 import {useTranslation} from "../hooks/useTranslation";
 import {tApi} from "../core/translateApi";
+import { convertDurationToTime, convertTimeToDuration } from "../core/timeConverter";
 
 const DeleteType = {
     never: "never",
@@ -60,9 +61,7 @@ export const EditNote = () => {
             setNoteType(expirationTypeToDeleteTypeMap[initialNote.expirationType]);
 
             if (initialNote.expirationPeriod) {
-                setSelectedDateTime(
-                    new Date(initialNote.expirationPeriod).toISOString().slice(0, 16)
-                );
+                setSelectedDateTime(convertDurationToTime(initialNote.expirationPeriod / 1000)); // передаем в секундах
             }
 
             return;
@@ -89,10 +88,7 @@ export const EditNote = () => {
             setNoteType(mappedNoteType);
 
             if (note.expirationPeriod) {
-                const date = new Date(note.expirationPeriod);
-                if (!isNaN(date.getTime())) {
-                    setSelectedDateTime(date.toISOString().slice(0, 16));
-                }
+                setSelectedDateTime(convertDurationToTime(note.expirationPeriod / 1000));
             } else {
                 setSelectedDateTime("");
             }
@@ -122,7 +118,7 @@ export const EditNote = () => {
             title,
             content: noteContent,
             expirationType: deleteTypeToExpirationTypeMap[noteType],
-            expirationPeriod: selectedDateTime ? new Date(selectedDateTime).getTime() : null,
+            expirationPeriod: selectedDateTime ? convertTimeToDuration(selectedDateTime) : null,
         };
 
         try {
@@ -134,7 +130,7 @@ export const EditNote = () => {
                     message: updatedNote.error
                 });
 
-                window.location.reload();
+                // window.location.reload();
                 return;
             }
 
