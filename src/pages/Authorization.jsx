@@ -7,6 +7,7 @@ import {PasswordInput} from "../components/PasswordInput";
 import {authentication, register} from "../core/api";
 import { SimpleModal } from "../components/modals/SimpleModal";
 import { useTranslation } from "../hooks/useTranslation";
+import {LanguageSelector} from "../components/LanguageSelector";
 
 export const Authorization = () => {
     const location = useLocation();
@@ -102,6 +103,7 @@ export const Authorization = () => {
                 <div className="auth-container">
                     <div className="header">
                         <a href="/" className="auth-logo">NoteHub</a>
+                        <LanguageSelector />
                         {theme === "light-theme" ? (
                             <BsMoonFill className={"icon active theme"} onClick={toggleTheme}/>
                         ) : (

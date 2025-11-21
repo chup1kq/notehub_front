@@ -360,6 +360,7 @@ textarea:focus-visible {
     text-decoration: none;
     font-size: 2rem;
     font-weight: bold;
+    margin-right: auto;
 
     &:hover {
       color: rgb(var(--primary));
@@ -453,6 +454,15 @@ textarea:focus-visible {
 
     &:hover {
       text-decoration: underline;
+    }
+  }
+
+  .header {
+    display: flex;
+    justify-content: right;
+
+    .icon {
+      margin-right: 0;
     }
   }
 }
