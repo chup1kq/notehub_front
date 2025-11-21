@@ -1050,3 +1050,12 @@ button.auth {
     min-width: 60px;
   }
 }
+
+.card-title,
+.card-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
