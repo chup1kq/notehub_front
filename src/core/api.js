@@ -235,6 +235,21 @@ export async function register(user, password) {
     }
 }
 
+export async function refresh() {
+    const response = await fetch(`${UserApi}/auth/refresh`, {
+        method: "GET",
+        credentials: "include"
+    });
+
+    if (response.ok) {
+        const newToken = await response.text();
+        if (setTokenRef) setTokenRef(newToken);
+        return newToken;
+    }
+
+    return null;
+}
+
 
 export async function logout() {
     try {
