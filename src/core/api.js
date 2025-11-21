@@ -191,6 +191,16 @@ export async function updateNote(note, token) {
     }
 }
 
+//-------------------- API for user service --------------------
+
+let setTokenRef = null;
+let setUserRef = null;
+
+export function initAuthApi(setToken, setUser) {
+    setTokenRef = setToken;
+    setUserRef = setUser;
+}
+
 export async function authentication(user, password) {
     try {
         const response = await fetch(`${UserApi}/auth/login`, {
