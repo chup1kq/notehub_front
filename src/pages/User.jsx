@@ -64,10 +64,6 @@ export const User = () => {
                     <div className={"container user-info col-md-3 text px-sm-4"}>
                         <h1>{user}</h1>
                         <p>Заметок: {notesPage.totalElements}</p>
-                        <p>
-                            Просмотров:{" "}
-                            {notes.reduce((sum, n) => sum + (n.views || 0), 0)}
-                        </p>
                     </div>
 
                     <div className={"col-md-9"}>
