@@ -139,8 +139,11 @@ export const EditNote = () => {
             setNoteContent(noteToUpdate.content);
             setNoteType(expirationTypeToDeleteTypeMap[noteToUpdate.expirationType] || DeleteType.never);
 
-            if (updatedNote.expirationPeriod) {
-                setSelectedDateTime(new Date(updatedNote.expirationPeriod).toISOString().slice(0, 16));
+            if (updatedNote.data.expirationPeriod) {
+                const dt = convertDurationToDateTime(
+                    updatedNote.data.expirationPeriod / 1000
+                );
+                setSelectedDateTime(dt);
             } else {
                 setSelectedDateTime("");
             }
