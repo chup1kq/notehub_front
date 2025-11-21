@@ -1062,6 +1062,7 @@ button.auth {
 
 .card-title,
 .card-text {
+  min-height: 1.3em;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
