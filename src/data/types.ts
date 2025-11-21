@@ -29,3 +29,7 @@ type NoteCreate = {
     expirationType: ExpirationType;
     expirationPeriod?: string | null;
 }
+
+type RefreshTokenApi =
+    | { ok: true; token: string }
+    | { ok: false };
