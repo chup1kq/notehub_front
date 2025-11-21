@@ -236,6 +236,24 @@ export async function register(user, password) {
 }
 
 
-export function logout() {
+export async function logout() {
+    try {
+        const response = await fetch(`${UserApi}/auth/logout`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+        });
 
+        if (response.status === 200) {
+            setTokenRef(null);
+            setUserRef(null);
+
+            return { ok: true };
+        }
+
+        return { ok: false, error: "Ошибка выхода" };
+
+    } catch {
+        return { ok: false, error: "Ошибка соединения с сервером" };
+    }
 }
