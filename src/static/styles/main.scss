@@ -833,7 +833,6 @@ button.auth {
 
 .row {
   max-width: 1400px;
-  //justify-self: center;
   margin-top: 1.5rem;
   display: flex;
   flex-wrap: wrap;
@@ -948,7 +947,7 @@ button.auth {
 
 .pagination-btn {
   padding: 0.45rem 1rem;
-  border-radius: 9999px; /* полностью круглые */
+  border-radius: 9999px;
   border: 2px solid rgb(var(--themeMain));
   background: transparent;
   color: rgb(var(--themeMain));
