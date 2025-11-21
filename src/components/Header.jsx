@@ -1,0 +1,127 @@
+import {SearchBar} from "./SearchBar";
+import {RxCross2} from "react-icons/rx";
+import {GiHamburgerMenu} from "react-icons/gi";
+import {MdLogout} from "react-icons/md";
+import {BsMoonFill, BsSunFill} from "react-icons/bs";
+import {useAuth} from "../context/AuthContext";
+import {useTheme} from "../hooks/useTheme";
+import {useNavigate} from "react-router-dom";
+import {useState} from "react";
+import {useConfirm} from "../hooks/useConfirm";
+import {LanguageSelector} from "./LanguageSelector";
+import {logout} from "../core/api";
+import {SimpleModal} from "./modals/SimpleModal";
+import { useTranslation } from "../hooks/useTranslation";
+
+export const Header = () => {
+    const {token, user } = useAuth();
+    const {theme, toggleTheme} = useTheme();
+    const navigate = useNavigate();
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const { confirm, modal: confirmModal } = useConfirm();
+    const { t } = useTranslation();
+
+    const [modal, setModal] = useState({
+        show: false,
+        message: ""
+    });
+
+    const search = (url: string) => {
+        navigate('/note/' + url);
+    };
+
+    const handleLogout = async () => {
+        const result = await confirm(t('header.logoutConfirm'));
+        if (result) {
+            const response = await logout();
+            if (!response.ok) {
+                setModal({
+                    show: true,
+                    message: response.error
+                });
+            }
+
+            navigate('/login');
+        }
+    };
+
+    return (
+        <>
+            <nav className="navbar">
+                <div className="navbar-inner">
+                    <div className="header-grid">
+                        <div className="header-left">
+                            <a className="logo text" href="/">NoteHub</a>
+                        </div>
+                        <div className="header-center hide-sm">
+                            <SearchBar onSearch={() => {
+                            }} doSearch={search}/>
+                        </div>
+                        <div className="header-right">
+                            <LanguageSelector />
+
+                            {theme === "light-theme" ? (
+                                <BsMoonFill className="icon theme active" onClick={toggleTheme}/>
+                            ) : (
+                                <BsSunFill className="icon theme active" onClick={toggleTheme}/>
+                            )}
+                            {!token ? (
+                                <>
+                                    <a href="/login" className="auth text hide-sm">{t('auth.login')}</a>
+                                    <span className="auth-separator hide-sm">/</span>
+                                    <a href="/register" className="auth text hide-sm">{t('auth.register')}</a>
+                                </>
+                            ) : (
+                                <div className="user-block hide-sm">
+                                    <a href="/account" className="auth text user-name">{user}</a>
+                                    <button type="button" onClick={handleLogout} className="auth logout-btn">
+                                        <MdLogout className="icon"/>
+                                    </button>
+                                </div>
+                            )}
+                            <button
+                                className="burger-btn show-sm"
+                                onClick={() => setDrawerOpen(true)}
+                                aria-label={t('header.openMenu')}
+                            >
+                                <GiHamburgerMenu/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <div className={`mobile-drawer ${drawerOpen ? "active" : ""}`}>
+                <button className="close-icon text" onClick={() => setDrawerOpen(false)}>
+                    <RxCross2/>
+                </button>
+                <div className="mobile-menu">
+                    <SearchBar
+                        onSearch={() => {}}
+                        doSearch={(value) => {
+                            search(value);
+                            setDrawerOpen(false);
+                        }}
+                    />
+                    {user ? (
+                        <>
+                            <a href="/account">{user}</a>
+                            <button onClick={() => { handleLogout(); setDrawerOpen(false); }}>{t('auth.logout')}</button>
+                        </>
+                    ) : (
+                        <>
+                            <a href="/login">{t('auth.login')}</a>
+                            <a href="/register">{t('auth.register')}</a>
+                        </>
+                    )}
+                </div>
+            </div>
+
+            {confirmModal}
+            <SimpleModal
+                show={modal.show}
+                message={modal.message}
+                onClose={() => setModal({ ...modal, show: false })}
+            />
+        </>
+    );
+}
