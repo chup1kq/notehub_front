@@ -3,7 +3,7 @@ import {NoteArea} from "../components/NoteArea";
 import {deleteNote, getNote, updateNote} from "../core/api";
 import {useNavigate, useParams} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
-import { SimpleModal } from "../components/modals/SimpleModal";
+import {SimpleModal} from "../components/modals/SimpleModal";
 
 const DeleteType = {
     never: "Never",
@@ -24,7 +24,7 @@ const deleteTypeToExpirationTypeMap = {
 };
 
 export const EditNote = () => {
-    const { id } = useParams();
+    const {id} = useParams();
     const [noteType, setNoteType] = useState(DeleteType.never);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [selectedDateTime, setSelectedDateTime] = useState("");
@@ -37,7 +37,7 @@ export const EditNote = () => {
         message: ""
     });
 
-    const { token } = useAuth();
+    const {token} = useAuth();
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
 
@@ -45,11 +45,16 @@ export const EditNote = () => {
         const fetchNote = async () => {
             const result = await getNote(id, token);
 
-            if (!result.ok) {
-                setModal({ show: true, message: result.error });
+            console.log(result.data);
+            if (result.data.status === 404) {
+                if (result.data.properties.api_error_code === 100) {
+                    setModal({show: true, message: "Извините, заметка больше недоступна"});
+                    return;
+                }
+
+                setModal({show: true, message: result.error});
                 return;
             }
-
             const note = result.data;
 
             setTitle(note.title);
@@ -83,7 +88,7 @@ export const EditNote = () => {
 
     const saveNote = async () => {
         if (noteType === DeleteType.burnAfterTime && !selectedDateTime) {
-            setModal({ show: true, message: "Пожалуйста, укажите дату и время удаления." });
+            setModal({show: true, message: "Пожалуйста, укажите дату и время удаления."});
             return;
         }
 
@@ -101,7 +106,8 @@ export const EditNote = () => {
             if (!updatedNote.ok) {
                 setModal({
                     show: true,
-                    message: updatedNote.error });
+                    message: updatedNote.error
+                });
 
                 window.location.reload();
                 return;
@@ -118,9 +124,9 @@ export const EditNote = () => {
                 setSelectedDateTime("");
             }
             setEditMode(false);
-            setModal({ show: true, message: "Изменения успешно сохранены" });
+            setModal({show: true, message: "Изменения успешно сохранены"});
         } catch (error) {
-            setModal({ show: true, message: error.message });
+            setModal({show: true, message: error.message});
         }
     };
 
@@ -246,7 +252,10 @@ export const EditNote = () => {
             <SimpleModal
                 show={modal.show}
                 message={modal.message}
-                onClose={() => setModal({ ...modal, show: false })}
+                onClose={() => {
+                    setModal({...modal, show: false});
+                    if (modal.message === "Извините, заметка больше недоступна") navigate("/");
+                }}
             />
         </>
     );

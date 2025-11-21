@@ -19,15 +19,13 @@ export const User = () => {
     });
 
     useEffect(() => {
-        if (!user) {
+        if (!user || !token) {
             navigate("/login");
             return;
         }
 
-        if (!token) return;
-
         const loadNotes = async () => {
-            const result = await getNotes(token);
+            const result = await getNotes(token, page-1);
 
             if (!result.ok) {
                 setModal({
@@ -40,7 +38,7 @@ export const User = () => {
             setNotesPage(result.data);
         };
 
-        loadNotes();
+        void loadNotes();
     }, [user, token, page]);
 
     const handleNoteAction = async (action, noteUrl) => {
@@ -51,10 +49,11 @@ export const User = () => {
         return <div className="text-center mt-5 text">Загрузка...</div>;
     }
 
-    const notes = notesPage.content.filter(note => note.available);
+    // const notes = notesPage.content.filter(note => note.available);
+    const notes = notesPage.content;
 
     const handlePageChange = (newPage) => {
-        navigate(`/album/${newPage}`);
+        navigate(`/account/${newPage}`);
     };
 
     return (
@@ -109,7 +108,7 @@ export const User = () => {
                                         {notesPage.currentPage > 1 && (
                                             <button
                                                 className="pagination-btn"
-                                                onClick={() => handlePageChange(notesPage.currentPage - 1)}
+                                                onClick={() => handlePageChange(Number(page) - 1)}
                                             >
                                                 Previous
                                             </button>
@@ -120,7 +119,7 @@ export const User = () => {
                                         {notesPage.currentPage < notesPage.totalPages && (
                                             <button
                                                 className="pagination-btn"
-                                                onClick={() => handlePageChange(notesPage.currentPage + 1)}
+                                                onClick={() => handlePageChange(Number(page) + 1)}
                                             >
                                                 Next
                                             </button>
@@ -129,7 +128,11 @@ export const User = () => {
                                 )}
 
                                 <div className="d-flex justify-content-center">
-                                    <a className="btn btn-primary text-center" href={"/"}>
+                                    <a
+                                        className="btn btn-primary text-center"
+                                        href={"/"}
+                                        style={{marginBottom: "20px"}}
+                                    >
                                         Создать новую заметку
                                     </a>
                                 </div>
