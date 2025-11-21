@@ -162,7 +162,7 @@ export async function createNote(note, token) {
                 expirationType: note.expirationType,
                 expirationPeriod:
                     note.expirationType === 'BURN_BY_PERIOD'
-                        ? new Date(note.expirationPeriod)
+                        ? note.expirationPeriod
                         : null,
             }),
         });

@@ -6,7 +6,7 @@ import {useAuth} from "../context/AuthContext";
 import {SimpleModal} from "../components/modals/SimpleModal";
 import {useTranslation} from "../hooks/useTranslation";
 import {tApi} from "../core/translateApi";
-import { convertDurationToTime, convertTimeToDuration } from "../core/timeConverter";
+import { convertDateTimeToDuration, convertDurationToDateTime } from "../core/timeConverter";
 
 const DeleteType = {
     never: "never",
@@ -61,7 +61,7 @@ export const EditNote = () => {
             setNoteType(expirationTypeToDeleteTypeMap[initialNote.expirationType]);
 
             if (initialNote.expirationPeriod) {
-                setSelectedDateTime(convertDurationToTime(initialNote.expirationPeriod / 1000)); // передаем в секундах
+                setSelectedDateTime(convertDurationToDateTime(initialNote.expirationPeriod / 1000)); // передаем в секундах
             }
 
             return;
@@ -88,7 +88,7 @@ export const EditNote = () => {
             setNoteType(mappedNoteType);
 
             if (note.expirationPeriod) {
-                setSelectedDateTime(convertDurationToTime(note.expirationPeriod / 1000));
+                setSelectedDateTime(convertDurationToDateTime(note.expirationPeriod / 1000));
             } else {
                 setSelectedDateTime("");
             }
@@ -118,7 +118,7 @@ export const EditNote = () => {
             title,
             content: noteContent,
             expirationType: deleteTypeToExpirationTypeMap[noteType],
-            expirationPeriod: selectedDateTime ? convertTimeToDuration(selectedDateTime) : null,
+            expirationPeriod: selectedDateTime ? convertDateTimeToDuration(selectedDateTime) : null,
         };
 
         try {

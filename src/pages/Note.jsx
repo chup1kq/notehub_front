@@ -5,7 +5,7 @@ import {createNote} from "../core/api";
 import {useAuth} from "../context/AuthContext";
 import { SimpleModal } from "../components/modals/SimpleModal";
 import { useTranslation } from "../hooks/useTranslation";
-import {convertTimeToDuration} from "../core/timeConverter";
+import { convertDateTimeToDuration } from "../core/timeConverter";
 
 const DeleteType = {
     never: "never",
@@ -64,11 +64,13 @@ export const Note = () => {
     const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
     const handleCreateNote = async () => {
+        console.log("selectedDateTime =", selectedDateTime);
+        console.log("converted =", convertDateTimeToDuration(selectedDateTime));
         const newNote = {
             title: title,
             content: noteContent,
             expirationType: deleteTypeToExpirationTypeMap[noteType],
-            expirationPeriod: noteType === DeleteType.burnByPeriod ? convertTimeToDuration(selectedDateTime) : null
+            expirationPeriod: noteType === DeleteType.burnByPeriod ? convertDateTimeToDuration(selectedDateTime) : null
         };
 
         const result = await createNote(newNote, token);

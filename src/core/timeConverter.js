@@ -1,17 +1,30 @@
-export function convertDurationToTime(duration){
-    const hours = Math.floor(duration / 3600);
-    const minutes = Math.floor((duration % 3600) / 60);
+export function convertDurationToDateTime(durationSeconds) {
+    const now = new Date();
+    const target = new Date(now.getTime() + durationSeconds * 1000);
 
-    const formattedHours = String(hours).padStart(2, '0');
-    const formattedMinutes = String(minutes).padStart(2, '0');
+    const year = target.getFullYear();
+    const month = String(target.getMonth() + 1).padStart(2, "0");
+    const day = String(target.getDate()).padStart(2, "0");
+    const hours = String(target.getHours()).padStart(2, "0");
+    const minutes = String(target.getMinutes()).padStart(2, "0");
 
-    return `${formattedHours}:${formattedMinutes}`;
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
-export function convertTimeToDuration(timeString){
-    if (timeString){
-        const [hours, minutes] = timeString.split(':').map(Number);
-        return `PT${hours}H${minutes}M`; // Формат ISO-8601 для Duration
-    }
-    return null;
+
+export function convertDateTimeToDuration(dateTimeString) {
+    if (!dateTimeString) return null;
+
+    const now = new Date();
+    const target = new Date(dateTimeString);
+
+    const diffMs = target - now;
+
+    if (diffMs <= 0) return null;
+
+    const totalMinutes = Math.floor(diffMs / 1000 / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    return `PT${hours}H${minutes}M`;
 }
