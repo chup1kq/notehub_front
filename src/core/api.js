@@ -215,7 +215,7 @@ export async function updateNote(note, token) {
                 expirationType: note.expirationType,
                 expirationPeriod:
                     note.expirationType === "BURN_BY_PERIOD"
-                        ? new Date(note.expirationPeriod).getTime()
+                        ? note.expirationPeriod
                         : null,
             }),
         });
