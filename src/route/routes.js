@@ -20,7 +20,7 @@ export const AppRoutes = () => {
             element: <Authorization />
         },
         {
-            path: '/account',
+            path: '/account/:page?',
             element: <User />
         },
         {
