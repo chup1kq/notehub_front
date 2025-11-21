@@ -295,3 +295,10 @@ export async function logout() {
         return { ok: false, error: "Ошибка соединения с сервером" };
     }
 }
+
+async function reLogin(): void {
+    if (setTokenRef) setTokenRef(null);
+    if (setUserRef) setUserRef(null);
+
+    if (setNavigatedRef) setNavigatedRef('/login');
+}
