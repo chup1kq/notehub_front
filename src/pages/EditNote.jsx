@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
 import {NoteArea} from "../components/NoteArea";
 import {deleteNote, getNote, updateNote} from "../core/api";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
 import {SimpleModal} from "../components/modals/SimpleModal";
 import {useTranslation} from "../hooks/useTranslation";
@@ -50,11 +50,27 @@ export const EditNote = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
 
+    const location = useLocation();
+    const initialNote = location.state?.note;
+
     useEffect(() => {
+        if (initialNote) {
+            setTitle(initialNote.title);
+            setNoteContent(initialNote.content);
+            setNoteType(expirationTypeToDeleteTypeMap[initialNote.expirationType]);
+
+            if (initialNote.expirationPeriod) {
+                setSelectedDateTime(
+                    new Date(initialNote.expirationPeriod).toISOString().slice(0, 16)
+                );
+            }
+
+            return;
+        }
+
         const fetchNote = async () => {
             const result = await getNote(id, token);
 
-            console.log(result.data);
             if (result.data.status === 404) {
                 if (result.data.properties.api_error_code === 100) {
                     setModal({show: true, message: t("api.errors.unavailableNote")});

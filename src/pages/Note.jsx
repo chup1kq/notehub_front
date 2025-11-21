@@ -80,7 +80,11 @@ export const Note = () => {
             return;
         }
 
-        navigate(`/note/${result.data.url}`);
+        navigate(`/note/${result.data.url}`, {
+            state: {
+                note: result.data
+            }
+        });
     };
 
     return (

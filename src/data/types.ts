@@ -13,14 +13,12 @@ type Page = {
 }
 
 type Note = {
-        id: string;
-        createdAt: Date;
-        title: string;
-        expirationType: ExpirationType;
-        expirationPeriod: string;
-        content: string;
-        registeredUsers: number;
-        anonymousUsers: number;
+    url: string;
+    title: string;
+    content: string;
+    createdAt: Date;
+    expirationType: ExpirationType;
+    expirationPeriod: string;
 }
 
 type NoteCreate = {
