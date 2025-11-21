@@ -65,39 +65,60 @@ export const User = () => {
                         {notes.length > 0 ? (
                             <div className={"container-fluid"}>
                                 <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-                                    {notes.map((note) => (
-                                        <div
-                                            key={note.url}
-                                            className="col"
-                                            onClick={() => navigate(`/note/${note.url}`)}
-                                        >
-                                            <div className="card mb-3 text card-cur">
-                                                <div
-                                                    className="card-header back-header"
-                                                    style={{
-                                                        display: "flex",
-                                                        justifyContent: "right",
-                                                        alignItems: "center",
-                                                        gap: "0.5rem",
-                                                    }}
-                                                >
-                                                    <div style={{display: "flex", alignItems: "center", gap: "4px", marginRight: "auto"}}>
-                                                        <IoMdEye/> {note.views || 0}
+                                    {notes.map((note) => {
+                                        const isUnavailable = note.available === false;
+
+                                        return (
+                                            <div
+                                                key={note.url}
+                                                className="col"
+                                                onClick={() => {
+                                                    if (!isUnavailable) navigate(`/note/${note.url}`);
+                                                }}
+                                                style={{
+                                                    cursor: isUnavailable ? "not-allowed" : "pointer",
+                                                    opacity: isUnavailable ? 0.5 : 1,
+                                                    pointerEvents: isUnavailable ? "none" : "auto",
+                                                }}
+                                            >
+                                                <div className="card mb-3 text card-cur">
+                                                    <div
+                                                        className="card-header back-header"
+                                                        style={{
+                                                            display: "flex",
+                                                            justifyContent: "right",
+                                                            alignItems: "center",
+                                                            gap: "0.5rem",
+                                                        }}
+                                                    >
+                                                        <div style={{
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            gap: "4px",
+                                                            marginRight: "auto"
+                                                        }}>
+                                                            <IoMdEye/> {note.views || 0}
+                                                        </div>
+
+                                                        <div>{formatDate(note.createdAt)}</div>
+
+                                                        {!isUnavailable && (
+                                                            <NoteDropdown
+                                                                noteUrl={note.url}
+                                                                setModal={setModal}
+                                                                token={token}
+                                                            />
+                                                        )}
                                                     </div>
-                                                    <div>{formatDate(note.createdAt)}</div>
-                                                    <NoteDropdown
-                                                        noteUrl={note.url}
-                                                        setModal={setModal}
-                                                        token={token}
-                                                    />
-                                                </div>
-                                                <div className="card-body back-body">
-                                                    <h2 className="card-title">{note.title}</h2>
-                                                    <p className="card-text">{note.content}</p>
+
+                                                    <div className="card-body back-body">
+                                                        <h2 className="card-title">{note.title}</h2>
+                                                        <p className="card-text">{note.content}</p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
 
                                 {notesPage.totalPages > 1 && (
