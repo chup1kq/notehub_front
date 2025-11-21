@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../static/styles/noteDropdown.scss';
+import {SlOptionsVertical} from "react-icons/sl";
 
 export const NoteDropdown = ({ noteUrl, onAction }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 
-    // Закрытие dropdown при клике вне компонента
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -37,7 +37,7 @@ export const NoteDropdown = ({ noteUrl, onAction }) => {
                 className="note-dropdown-trigger"
                 onClick={toggleDropdown}
             >
-                ⋯
+                <SlOptionsVertical />
             </button>
 
             <div className={`note-dropdown-menu ${isOpen ? 'open' : ''}`}>
