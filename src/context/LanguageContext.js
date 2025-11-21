@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import "../static/styles/language.scss";
+import {setApiLanguage} from "../core/translateApi";
 
 const LanguageContext = createContext();
 
@@ -30,6 +31,10 @@ export const LanguageProvider = ({ children }) => {
             }
         }
     }, []);
+
+    useEffect(() => {
+        setApiLanguage(language);
+    }, [language]);
 
     const contextValue = useMemo(
         () => ({

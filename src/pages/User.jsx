@@ -5,13 +5,14 @@ import {useEffect, useState} from "react";
 import {getNotes} from "../core/api";
 import { SimpleModal } from "../components/modals/SimpleModal";
 import { NoteDropdown } from "../components/NoteDropdown";
-import { handleNoteDropdownAction } from "../handlers/noteDropdownHandler.js";
+import { useTranslation } from "../hooks/useTranslation";
 
 export const User = () => {
     const { user, token } = useAuth();
     const navigate = useNavigate();
     const { page = 1 } = useParams();
     const [notesPage, setNotesPage] = useState(null);
+    const { t } = useTranslation();
 
     const [modal, setModal] = useState({
         show: false,
@@ -41,15 +42,10 @@ export const User = () => {
         void loadNotes();
     }, [user, token, page]);
 
-    const handleNoteAction = async (action, noteUrl) => {
-        await handleNoteDropdownAction(action, noteUrl, setModal, token, navigate);
-    };
-
     if (!notesPage) {
-        return <div className="text-center mt-5 text">Загрузка...</div>;
+        return <div className="text-center mt-5 text">{t('user.loading')}</div>;
     }
 
-    // const notes = notesPage.content.filter(note => note.available);
     const notes = notesPage.content;
 
     const handlePageChange = (newPage) => {
@@ -62,7 +58,7 @@ export const User = () => {
                 <div className={"row custom-row"}>
                     <div className={"container user-info col-md-3 text px-sm-4"}>
                         <h1>{user}</h1>
-                        <p>Заметок: {notesPage.totalElements}</p>
+                        <p>{t('notes.numberOfNotes')}: {notesPage.totalElements}</p>
                     </div>
 
                     <div className={"col-md-9"}>
@@ -91,7 +87,8 @@ export const User = () => {
                                                     <div>{formatDate(note.createdAt)}</div>
                                                     <NoteDropdown
                                                         noteUrl={note.url}
-                                                        onAction={handleNoteAction}
+                                                        setModal={setModal}
+                                                        token={token}
                                                     />
                                                 </div>
                                                 <div className="card-body back-body">
@@ -110,18 +107,18 @@ export const User = () => {
                                                 className="pagination-btn"
                                                 onClick={() => handlePageChange(Number(page) - 1)}
                                             >
-                                                Previous
+                                                {t('user.previous')}
                                             </button>
                                         )}
                                         <span className="pagination-number">
-                                            Page {notesPage.currentPage} of {notesPage.totalPages}
+                                            {t('user.page')} {notesPage.currentPage} {t('user.of')} {notesPage.totalPages}
                                         </span>
                                         {notesPage.currentPage < notesPage.totalPages && (
                                             <button
                                                 className="pagination-btn"
                                                 onClick={() => handlePageChange(Number(page) + 1)}
                                             >
-                                                Next
+                                                {t('user.next')}
                                             </button>
                                         )}
                                     </div>
@@ -133,13 +130,13 @@ export const User = () => {
                                         href={"/"}
                                         style={{marginBottom: "20px"}}
                                     >
-                                        Создать новую заметку
+                                        {t('notes.createNew')}
                                     </a>
                                 </div>
                             </div>
                         ) : (
                             <div className="alert alert-info text-center" role="alert">
-                                Заметок еще нет. <a href={"/"}>Создайте новую</a>
+                                {t('notes.noNotes')}. <a href={"/"}>{t('user.createNewNote')}</a>
                             </div>
                         )}
                     </div>

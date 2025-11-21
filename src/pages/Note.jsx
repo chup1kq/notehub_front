@@ -4,11 +4,12 @@ import {useNavigate} from "react-router-dom";
 import {createNote} from "../core/api";
 import {useAuth} from "../context/AuthContext";
 import { SimpleModal } from "../components/modals/SimpleModal";
+import { useTranslation } from "../hooks/useTranslation";
 
 const DeleteType = {
-    never: "Never",
-    burnAfterRead: "Burn after read",
-    burnAfterTime: "Burn after time"
+    never: "never",
+    burnAfterRead: "burnAfterRead",
+    burnAfterTime: "burnAfterTime"
 };
 
 const deleteTypeToExpirationTypeMap = {
@@ -32,6 +33,7 @@ export const Note = () => {
     const navigate = useNavigate();
     const dropdownRef = useRef(null);
     const {token} = useAuth();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -82,7 +84,7 @@ export const Note = () => {
                     <input
                         type="text"
                         className="note-area note-title-input"
-                        placeholder="Введите заголовок заметки"
+                        placeholder={t('notes.titlePlaceholder')}
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                     />
@@ -94,7 +96,7 @@ export const Note = () => {
 
                 <div className="note-settings-container">
                     <div className="note-settings" id="note-settings">
-                        <label className="text settings-label">Тип удаления</label>
+                        <label className="text settings-label">{t('expiration.typeOfDelete')}</label>
                         <div className="dropdown-container" ref={dropdownRef}>
                             <button
                                 className="dropdown-trigger"
@@ -103,7 +105,7 @@ export const Note = () => {
                                 aria-expanded={isDropdownOpen}
                                 aria-haspopup="listbox"
                             >
-                                <span className="text">{noteType}</span>
+                                <span className="text">{t(`expiration.${noteType}`)}</span>
                                 <span className={`dropdown-arrow ${isDropdownOpen ? "open" : ""}`}>
                                     ▼
                                 </span>
@@ -120,7 +122,7 @@ export const Note = () => {
                                             role="option"
                                             aria-selected={noteType === type}
                                         >
-                                            <span className="text">{type}</span>
+                                            <span className="text">{t(`expiration.${type}`)}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -130,7 +132,7 @@ export const Note = () => {
 
                     {noteType === DeleteType.burnAfterTime && (
                         <div className="time-settings" id="time-settings">
-                            <label className="text settings-label">Дата и время удаления</label>
+                            <label className="text settings-label">{t('editNote.deleteDateTime')}</label>
                             <input
                                 type="datetime-local"
                                 className="datetime-input"
@@ -141,8 +143,8 @@ export const Note = () => {
 
                             {selectedDateTime && (
                                 <div className="datetime-preview text">
-                                    Заметка будет удалена:{" "}
-                                    {new Date(selectedDateTime).toLocaleString("ru-RU")}
+                                    {t('editNote.willBeDeleted')}{" "}
+                                    {new Date(selectedDateTime).toLocaleString()}
                                 </div>
                             )}
                         </div>
@@ -154,7 +156,7 @@ export const Note = () => {
                             style={{textAlign: "center"}}
                             onClick={handleCreateNote}
                         >
-                            Создать
+                            {t('notes.create')}
                         </button>
                     </div>
                 </div>

@@ -4,11 +4,13 @@ import {deleteNote, getNote, updateNote} from "../core/api";
 import {useNavigate, useParams} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
 import {SimpleModal} from "../components/modals/SimpleModal";
+import {useTranslation} from "../hooks/useTranslation";
+import {tApi} from "../core/translateApi";
 
 const DeleteType = {
-    never: "Never",
-    burnAfterRead: "Burn after read",
-    burnAfterTime: "Burn after time"
+    never: "never",
+    burnAfterRead: "burn after read",
+    burnAfterTime: "burn after time"
 }
 
 const expirationTypeToDeleteTypeMap = {
@@ -40,6 +42,7 @@ export const EditNote = () => {
     const {token} = useAuth();
     const dropdownRef = useRef(null);
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchNote = async () => {
@@ -48,7 +51,7 @@ export const EditNote = () => {
             console.log(result.data);
             if (result.data.status === 404) {
                 if (result.data.properties.api_error_code === 100) {
-                    setModal({show: true, message: "Извините, заметка больше недоступна"});
+                    setModal({show: true, message: tApi("api.errors.unavailableNote")});
                     return;
                 }
 
@@ -88,7 +91,7 @@ export const EditNote = () => {
 
     const saveNote = async () => {
         if (noteType === DeleteType.burnAfterTime && !selectedDateTime) {
-            setModal({show: true, message: "Пожалуйста, укажите дату и время удаления."});
+            setModal({ show: true, message: t('editNote.specifyDateTime') });
             return;
         }
 
@@ -124,7 +127,7 @@ export const EditNote = () => {
                 setSelectedDateTime("");
             }
             setEditMode(false);
-            setModal({show: true, message: "Изменения успешно сохранены"});
+            setModal({ show: true, message: t('editNote.changesSaved') });
         } catch (error) {
             setModal({show: true, message: error.message});
         }
@@ -159,7 +162,7 @@ export const EditNote = () => {
                     <input
                         type="text"
                         className="note-area note-title-input"
-                        placeholder="Введите заголовок заметки"
+                        placeholder={t('notes.titlePlaceholder')}
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         disabled={!editMode}
@@ -173,7 +176,7 @@ export const EditNote = () => {
 
                 <div className={"note-settings-container"}>
                     <div className={"note-settings"} id={"note-settings"}>
-                        <label className={"text settings-label"}>Тип удаления</label>
+                        <label className={"text settings-label"}>{t('expiration.typeOfDelete')}</label>
                         <div className={"dropdown-container"} ref={dropdownRef}>
                             <button
                                 className={"dropdown-trigger"}
@@ -183,7 +186,7 @@ export const EditNote = () => {
                                 aria-haspopup="listbox"
                                 disabled={!editMode}
                             >
-                                <span className={"text"}>{noteType}</span>
+                                <span className={"text"}>{t(`expiration.${noteType}`)}</span>
                                 <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>
                                     ▼
                                 </span>
@@ -200,7 +203,7 @@ export const EditNote = () => {
                                             role="option"
                                             aria-selected={noteType === type}
                                         >
-                                            <span className={"text"}>{type}</span>
+                                            <span className={"text"}>{t(`expiration.${type}`)}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -210,7 +213,7 @@ export const EditNote = () => {
 
                     {noteType === DeleteType.burnAfterTime && (
                         <div className={"time-settings"}>
-                            <label className={"text settings-label"}>Дата и время удаления</label>
+                            <label className={"text settings-label"}>{t('editNote.deleteDateTime')}</label>
                             <input
                                 type="datetime-local"
                                 className={"datetime-input"}
@@ -221,7 +224,7 @@ export const EditNote = () => {
                             />
                             {selectedDateTime && (
                                 <div className={"datetime-preview text"}>
-                                    Заметка будет удалена: {new Date(selectedDateTime).toLocaleString('ru-RU')}
+                                    {t('editNote.willBeDeleted')} {new Date(selectedDateTime).toLocaleString()}
                                 </div>
                             )}
                         </div>
@@ -230,19 +233,19 @@ export const EditNote = () => {
                     {!editMode ? (
                         <div className="note-buttons">
                             <button className="btn btn-primary" onClick={() => setEditMode(true)}>
-                                Редактировать
+                                {t('notes.edit')}
                             </button>
                             <button className="btn btn-secondary" onClick={handleDeleteNote}>
-                                Удалить
+                                {t('notes.delete')}
                             </button>
                         </div>
                     ) : (
                         <div className="note-buttons">
                             <button className="btn btn-primary" onClick={saveNote}>
-                                Сохранить
+                                {t('editNote.save')}
                             </button>
                             <button className="btn btn-secondary" onClick={cancelNote}>
-                                Отмена
+                                {t('modals.cancel')}
                             </button>
                         </div>
                     )}
@@ -254,7 +257,7 @@ export const EditNote = () => {
                 message={modal.message}
                 onClose={() => {
                     setModal({...modal, show: false});
-                    if (modal.message === "Извините, заметка больше недоступна") navigate("/");
+                    if (modal.message === tApi("api.errors.unavailableNote")) navigate("/");
                 }}
             />
         </>

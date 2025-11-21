@@ -1,10 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../static/styles/noteDropdown.scss';
-import {SlOptionsVertical} from "react-icons/sl";
+import { SlOptionsVertical } from "react-icons/sl";
+import { deleteNote } from "../core/api";
+import { tApi } from "../core/translateApi";
+import { useTranslation } from "../hooks/useTranslation";
 
-export const NoteDropdown = ({ noteUrl, onAction }) => {
+const baseNoteUrl = "http://localhost:3000/note";
+
+export const NoteDropdown = ({ noteUrl, setModal, token }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -33,10 +39,7 @@ export const NoteDropdown = ({ noteUrl, onAction }) => {
 
     return (
         <div className="note-dropdown" ref={dropdownRef}>
-            <button
-                className="note-dropdown-trigger"
-                onClick={toggleDropdown}
-            >
+            <button className="note-dropdown-trigger" onClick={toggleDropdown}>
                 <SlOptionsVertical />
             </button>
 
@@ -48,7 +51,7 @@ export const NoteDropdown = ({ noteUrl, onAction }) => {
                         handleAction('share');
                     }}
                 >
-                    Поделиться
+                    {t('notes.share')}
                 </button>
                 <button
                     className="note-dropdown-item"
@@ -57,7 +60,7 @@ export const NoteDropdown = ({ noteUrl, onAction }) => {
                         handleAction('delete');
                     }}
                 >
-                    Удалить
+                    {t('notes.delete')}
                 </button>
             </div>
         </div>

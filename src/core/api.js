@@ -1,3 +1,5 @@
+import { tApi } from "./translateApi";
+
 const NoteApi = "http://localhost:8080/api/v1";
 const UserApi = "http://localhost:8081/api/v1";
 
@@ -25,7 +27,7 @@ export async function getNote(url, token = null) {
 
             if (!refreshResponse.ok) {
                 void reLogin();
-                return { ok: false, error: "Не удалось обновить токен" };
+                return { ok: false, error: tApi("api.errors.refreshUnable") };
             }
 
             token = refreshResponse.token;
@@ -37,21 +39,22 @@ export async function getNote(url, token = null) {
         }
 
         if (response.status === 401) {
-            return { ok: false, error: "Неавторизованный доступ. Пожалуйста, войдите в систему." };
+            return { ok: false, error: tApi("api.errors.unauthorizedAccess") };
         }
 
         if (response.status === 404) {
             const json = await response.json();
-            return {ok: false, data: json, error: "Заметка не найдена."};
+            return {ok: false, data: json, error: tApi("api.errors.noteNotFound") };
         }
 
-        return { ok: false, error: `Ошибка сервера: ${response.status}` };
-
-    } catch (err) {
-        return { ok: false, error: "Ошибка соединения с сервером" };
+        return {
+            ok: false,
+            error: tApi("api.errors.serverError", { status: response.status })
+        };
+    } catch {
+        return { ok: false, error: tApi("api.errors.connectionError") };
     }
 }
-
 
 export async function getNotes(token, page = 0) {
     async function fetchNotes() {
@@ -69,7 +72,7 @@ export async function getNotes(token, page = 0) {
 
             if (!refreshResponse.ok) {
                 void reLogin();
-                return { ok: false, error: "Не удалось обновить токен" };
+                return { ok: false, error: tApi("api.errors.refreshUnable") };
             }
 
             token = refreshResponse.token;
@@ -103,9 +106,8 @@ export async function getNotes(token, page = 0) {
                 totalElements: data.page.totalElements
             }
         };
-
-    } catch (error) {
-        return { ok: false, error: "Ошибка соединения с сервером" };
+    } catch {
+        return { ok: false, error: tApi("api.errors.connectionError") };
     }
 }
 
@@ -124,7 +126,7 @@ export async function deleteNote(url, token) {
 
             if (!refreshResponse.ok) {
                 void reLogin();
-                return { ok: false, error: "Не удалось обновить токен" };
+                return { ok: false, error: tApi("api.errors.refreshUnable") };
             }
 
             token = refreshResponse.token;
@@ -136,14 +138,16 @@ export async function deleteNote(url, token) {
         }
 
         if (response.status === 403) {
-            return { ok: false, error: "Недостаточно прав для удаления заметки" };
+            return { ok: false, error: tApi("api.errors.insufficientPermissions") };
         }
 
         const err = await response.json();
-        return { ok: false, error: err.message || "Ошибка при удалении заметки" };
-
-    } catch (error) {
-        return { ok: false, error: "Ошибка соединения с сервером" };
+        return {
+            ok: false,
+            error: err.message || tApi("api.errors.deleteNoteError")
+        };
+    } catch {
+        return { ok: false, error: tApi("api.errors.connectionError") };
     }
 }
 
@@ -172,7 +176,7 @@ export async function createNote(note, token) {
 
             if (!refreshResponse.ok) {
                 void reLogin();
-                return { ok: false, error: "Не удалось обновить токен" };
+                return { ok: false, error: tApi("api.errors.refreshUnable") };
             }
 
             token = refreshResponse.token;
@@ -184,19 +188,21 @@ export async function createNote(note, token) {
         }
 
         if (response.status === 400) {
-            return { ok: false, error: "Неверные данные" };
+            return { ok: false, error: tApi("api.errors.invalidData") };
         }
 
-        return { ok: false, error: `Ошибка сервера: ${response.status}` };
-
-    } catch (error) {
-        return { ok: false, error: "Ошибка соединения с сервером" };
+        return {
+            ok: false,
+            error: tApi("api.errors.serverError", { status: response.status })
+        };
+    } catch {
+        return { ok: false, error: tApi("api.errors.connectionError") };
     }
 }
 
 export async function updateNote(note, token) {
     if (note.expirationType === "BURN_AFTER_TIME" && !note.expirationPeriod) {
-        return { ok: false, error: "Укажите время для Burn by period" };
+        return { ok: false, error: tApi("api.errors.specifyTime") };
     }
 
     async function fetchNotes() {
@@ -223,7 +229,7 @@ export async function updateNote(note, token) {
 
             if (!refreshResponse.ok) {
                 void reLogin();
-                return { ok: false, error: "Не удалось обновить токен" };
+                return { ok: false, error: tApi("api.errors.refreshUnable") };
             }
 
             token = refreshResponse.token;
@@ -235,18 +241,20 @@ export async function updateNote(note, token) {
         }
 
         if (response.status === 400) {
-            return { ok: false, error: "Недопустимые символы в заголовке. Только английские буквы и цифры." };
+            return { ok: false, error: tApi("api.errors.invalidTitle") };
         }
 
         if (response.status === 403) {
-            return { ok: false, error: "Недостаточно прав для редактирования" };
+            return { ok: false, error: tApi("api.errors.insufficientEditPermissions") };
         }
 
         const err = await response.json();
-        return { ok: false, error: err.message || "Ошибка при сохранении изменений" };
-
-    } catch (err) {
-        return { ok: false, error: "Ошибка соединения с сервером" };
+        return {
+            ok: false,
+            error: err.message || tApi("api.errors.saveChangesError")
+        };
+    } catch {
+        return { ok: false, error: tApi("api.errors.connectionError") };
     }
 }
 
@@ -279,10 +287,9 @@ export async function authentication(user, password) {
             return { ok: true, data: token };
         }
 
-        return { ok: false, error: "Ошибка входа: проверьте логин и пароль" };
-
+        return { ok: false, error: tApi("api.errors.loginError") };
     } catch {
-        return { ok: false, error: "Ошибка соединения с сервером" };
+        return { ok: false, error: tApi("api.errors.connectionError") };
     }
 }
 
@@ -291,7 +298,7 @@ export async function register(user, password) {
         const response = await fetch(`${UserApi}/user/register`, {
             method: "POST",
             headers: getHeaders(null),
-            body: JSON.stringify({ login: user, password }),
+            body: JSON.stringify({ login: user, password })
         });
 
         if (response.ok) {
@@ -299,13 +306,12 @@ export async function register(user, password) {
         }
 
         if (response.status === 409) {
-            return { ok: false, error: "Пользователь уже существует" };
+            return { ok: false, error: tApi("api.errors.userExists") };
         }
 
-        return { ok: false, error: "Ошибка регистрации" };
-
+        return { ok: false, error: tApi("api.errors.registrationError") };
     } catch {
-        return { ok: false, error: "Ошибка соединения с сервером" };
+        return { ok: false, error: tApi("api.errors.connectionError") };
     }
 }
 
@@ -346,10 +352,9 @@ export async function logout() {
             return { ok: true };
         }
 
-        return { ok: false, error: "Ошибка выхода" };
-
+        return { ok: false, error: tApi("api.errors.logoutError") };
     } catch {
-        return { ok: false, error: "Ошибка соединения с сервером" };
+        return { ok: false, error: tApi("api.errors.connectionError") };
     }
 }
 

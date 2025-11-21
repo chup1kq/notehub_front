@@ -11,6 +11,7 @@ import {useConfirm} from "../hooks/useConfirm";
 import {LanguageSelector} from "./LanguageSelector";
 import {logout} from "../core/api";
 import {SimpleModal} from "./modals/SimpleModal";
+import { useTranslation } from "../hooks/useTranslation";
 
 export const Header = () => {
     const {token, user } = useAuth();
@@ -18,6 +19,7 @@ export const Header = () => {
     const navigate = useNavigate();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const { confirm, modal: confirmModal } = useConfirm();
+    const { t } = useTranslation();
 
     const [modal, setModal] = useState({
         show: false,
@@ -29,7 +31,7 @@ export const Header = () => {
     };
 
     const handleLogout = async () => {
-        const result = await confirm("Вы уверены, что хотите выйти из аккаунта?");
+        const result = await confirm(t('header.logoutConfirm'));
         if (result) {
             const response = await logout();
             if (!response.ok) {
@@ -65,9 +67,9 @@ export const Header = () => {
                             )}
                             {!token ? (
                                 <>
-                                    <a href="/login" className="auth text hide-sm">Войти</a>
+                                    <a href="/login" className="auth text hide-sm">{t('auth.login')}</a>
                                     <span className="auth-separator hide-sm">/</span>
-                                    <a href="/register" className="auth text hide-sm">Зарегистрироваться</a>
+                                    <a href="/register" className="auth text hide-sm">{t('auth.register')}</a>
                                 </>
                             ) : (
                                 <div className="user-block hide-sm">
@@ -80,7 +82,7 @@ export const Header = () => {
                             <button
                                 className="burger-btn show-sm"
                                 onClick={() => setDrawerOpen(true)}
-                                aria-label="Open menu"
+                                aria-label={t('header.openMenu')}
                             >
                                 <GiHamburgerMenu/>
                             </button>
@@ -103,12 +105,12 @@ export const Header = () => {
                     {user ? (
                         <>
                             <a href="/account">{user}</a>
-                            <button onClick={() => { handleLogout(); setDrawerOpen(false); }}>Выйти</button>
+                            <button onClick={() => { handleLogout(); setDrawerOpen(false); }}>{t('auth.logout')}</button>
                         </>
                     ) : (
                         <>
-                            <a href="/login">Войти</a>
-                            <a href="/register">Зарегистрироваться</a>
+                            <a href="/login">{t('auth.login')}</a>
+                            <a href="/register">{t('auth.register')}</a>
                         </>
                     )}
                 </div>

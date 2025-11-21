@@ -1,8 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import "../../static/styles/modals/ModalWindow.scss";
+import { useTranslation } from "../../hooks/useTranslation";
 
 export const ConfirmationModal = ({ show, message, onConfirm, onCancel }) => {
+    const { t } = useTranslation();
+
     if (!show) return null;
 
     return (
@@ -14,10 +17,10 @@ export const ConfirmationModal = ({ show, message, onConfirm, onCancel }) => {
 
                 <div className="modal-footer" style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
                     <button className="modal-btn" onClick={onConfirm}>
-                        Продолжить
+                        {t('modals.confirm')}
                     </button>
                     <button className="modal-btn cancel" onClick={onCancel}>
-                        Отмена
+                        {t('modals.cancel')}
                     </button>
                 </div>
             </div>

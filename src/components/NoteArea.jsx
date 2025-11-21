@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from "../hooks/useTranslation";
 
 export const NoteArea = ({ content, onContentChange, className = "", disabled = false }) => {
     const [value, setValue] = useState(content || "");
     const textareaRef = useRef(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (textareaRef.current) {
@@ -29,7 +31,7 @@ export const NoteArea = ({ content, onContentChange, className = "", disabled = 
             className={`note-area ${className}`}
             value={value}
             onChange={handleChange}
-            placeholder="Введите ваш текст..."
+            placeholder={t('notes.contentPlaceholder')}
             disabled={disabled}
         />
     );

@@ -6,10 +6,12 @@ import {useAuth} from "../context/AuthContext";
 import {PasswordInput} from "../components/PasswordInput";
 import {authentication, register} from "../core/api";
 import { SimpleModal } from "../components/modals/SimpleModal";
+import { useTranslation } from "../hooks/useTranslation";
 
 export const Authorization = () => {
     const location = useLocation();
     const isLoginPage = location.pathname === "/login";
+    const { t } = useTranslation();
 
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
@@ -80,7 +82,7 @@ export const Authorization = () => {
         }
 
         if (password !== confirmPassword) {
-            setErrors(prev => ({...prev, confirmPassword: "Пароли не совпадают"}));
+            setErrors(prev => ({...prev, confirmPassword: t('auth.passwordsNotMatch')}));
             return;
         }
 
@@ -112,14 +114,14 @@ export const Authorization = () => {
                             id="login"
                             onChange={(e) => setLogin(e.target.value)}
                             value={login}
-                            placeholder="Login"
+                            placeholder={t('auth.loginPlaceholder')}
                             className="auth-input"
                         />
                         <PasswordInput
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Password"
+                            placeholder={t('auth.passwordPlaceholder')}
                         />
                         {!isLoginPage && (
                             <>
@@ -127,7 +129,7 @@ export const Authorization = () => {
                                     id="confirmPassword"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    placeholder="Confirm Password"
+                                    placeholder={t('auth.confirmPasswordPlaceholder')}
                                 />
                                 {errors.confirmPassword && (
                                     <p className="auth-error">{errors.confirmPassword}</p>
@@ -139,14 +141,14 @@ export const Authorization = () => {
                             className="auth-button"
                             onClick={handleSubmit}
                         >
-                            {isLoginPage ? "Войти" : "Зарегистрироваться"}
+                            {isLoginPage ? t('auth.login') : t('auth.register')}
                         </button>
                     </div>
 
                     <p className="auth-text">
-                        {isLoginPage ? "Еще нет аккаунта? " : "Уже есть аккаунт? "}
+                        {isLoginPage ? t('auth.noAccountYet') + " " : t('auth.alreadyHaveAnAccount') + " "}
                         <a href={isLoginPage ? "/register" : "/login"} className="auth-link">
-                            {isLoginPage ? "Зарегистрироваться" : "Войти"}
+                            {isLoginPage ? t('auth.register') : t('auth.login')}
                         </a>
                     </p>
                 </div>

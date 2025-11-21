@@ -1,8 +1,11 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import "../../static/styles/modals/ModalWindow.scss";
+import { useTranslation } from "../../hooks/useTranslation";
 
 export const SimpleModal = ({ show, message, onClose }) => {
+    const { t } = useTranslation();
+
     useEffect(() => {
         const handleKeyPress = (event) => {
             if (event.key === 'Enter' && show) {
@@ -28,7 +31,7 @@ export const SimpleModal = ({ show, message, onClose }) => {
 
                 <div className="modal-footer">
                     <button className="modal-btn" onClick={onClose}>
-                        Продолжить
+                        {t('modals.confirm')}
                     </button>
                 </div>
             </div>
