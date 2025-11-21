@@ -201,7 +201,7 @@ export async function createNote(note, token) {
 }
 
 export async function updateNote(note, token) {
-    if (note.expirationType === "BURN_AFTER_TIME" && !note.expirationPeriod) {
+    if (note.expirationType === "BURN_BY_PERIOD" && !note.expirationPeriod) {
         return { ok: false, error: tApi("api.errors.specifyTime") };
     }
 
@@ -214,7 +214,7 @@ export async function updateNote(note, token) {
                 content: note.content,
                 expirationType: note.expirationType,
                 expirationPeriod:
-                    note.expirationType === "BURN_AFTER_TIME"
+                    note.expirationType === "BURN_BY_PERIOD"
                         ? new Date(note.expirationPeriod).getTime()
                         : null,
             }),

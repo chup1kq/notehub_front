@@ -33,7 +33,7 @@ export const en = {
         typeOfDelete: "Type of delete",
         never: "Never",
         burnAfterRead: "Burn after read",
-        burnAfterTime: "Burn after time"
+        burnByPeriod: "Burn by period"
     },
     header: {
         logoutConfirm: "Are you sure you want to log out?",

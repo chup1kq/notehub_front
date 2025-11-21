@@ -9,19 +9,19 @@ import { useTranslation } from "../hooks/useTranslation";
 const DeleteType = {
     never: "never",
     burnAfterRead: "burnAfterRead",
-    burnAfterTime: "burnAfterTime"
+    burnByPeriod: "burnByPeriod"
 };
 
 const deleteTypeToExpirationTypeMap = {
     [DeleteType.never]: "NEVER",
     [DeleteType.burnAfterRead]: "BURN_AFTER_READ",
-    [DeleteType.burnAfterTime]: "BURN_AFTER_TIME",
+    [DeleteType.burnByPeriod]: "BURN_BY_PERIOD",
 };
 
 const noteTypeToKey = {
     [DeleteType.never]: 'never',
     [DeleteType.burnAfterRead]: 'burnAfterRead',
-    [DeleteType.burnAfterTime]: 'burnAfterTime',
+    [DeleteType.burnByPeriod]: 'burnByPeriod',
 };
 
 export const Note = () => {
@@ -55,7 +55,7 @@ export const Note = () => {
         setNoteType(type);
         setIsDropdownOpen(false);
 
-        if (type !== DeleteType.burnAfterTime) {
+        if (type !== DeleteType.burnByPeriod) {
             setSelectedDateTime("");
         }
     };
@@ -67,7 +67,7 @@ export const Note = () => {
             title: title,
             content: noteContent,
             expirationType: deleteTypeToExpirationTypeMap[noteType],
-            expirationPeriod: noteType === DeleteType.burnAfterTime ? selectedDateTime : null
+            expirationPeriod: noteType === DeleteType.burnByPeriod ? selectedDateTime : null
         };
 
         const result = await createNote(newNote, token);
@@ -140,7 +140,7 @@ export const Note = () => {
                         </div>
                     </div>
 
-                    {noteType === DeleteType.burnAfterTime && (
+                    {noteType === DeleteType.burnByPeriod && (
                         <div className="time-settings" id="time-settings">
                             <label className="text settings-label">{t('editNote.deleteDateTime')}</label>
                             <input

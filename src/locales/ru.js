@@ -33,7 +33,7 @@ export const ru = {
         typeOfDelete: "Тип удаления",
         never: "Никогда",
         burnAfterRead: "Сгорает по прочтении",
-        burnAfterTime: "Сгорает по времени"
+        burnByPeriod: "Сгорает по времени"
     },
     header: {
         logoutConfirm: "Вы уверены, что хотите выйти из аккаунта?",

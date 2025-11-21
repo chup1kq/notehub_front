@@ -1,7 +1,7 @@
 type ExpirationType =
     | "DEFAULT"
     | "BURN_AFTER_READ"
-    | "BURN_AFTER_TIME";
+    | "BURN_BY_PERIOD";
 
 
 type Page = {

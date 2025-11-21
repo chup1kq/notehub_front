@@ -10,25 +10,25 @@ import {tApi} from "../core/translateApi";
 const DeleteType = {
     never: "never",
     burnAfterRead: "burn after read",
-    burnAfterTime: "burn after time"
+    burnByPeriod: "burn by period"
 }
 
 const expirationTypeToDeleteTypeMap = {
     "NEVER": DeleteType.never,
     "BURN_AFTER_READ": DeleteType.burnAfterRead,
-    "BURN_AFTER_TIME": DeleteType.burnAfterTime,
+    "BURN_BY_PERIOD": DeleteType.burnByPeriod,
 };
 
 const deleteTypeToExpirationTypeMap = {
     [DeleteType.never]: "NEVER",
     [DeleteType.burnAfterRead]: "BURN_AFTER_READ",
-    [DeleteType.burnAfterTime]: "BURN_AFTER_TIME",
+    [DeleteType.burnByPeriod]: "BURN_BY_PERIOD",
 };
 
 const noteTypeToKey = {
     [DeleteType.never]: 'never',
     [DeleteType.burnAfterRead]: 'burnAfterRead',
-    [DeleteType.burnAfterTime]: 'burnAfterTime',
+    [DeleteType.burnByPeriod]: 'burnByPeriod',
 };
 
 export const EditNote = () => {
@@ -106,13 +106,13 @@ export const EditNote = () => {
         setNoteType(type);
         setIsDropdownOpen(false);
 
-        if (type !== DeleteType.burnAfterTime) {
+        if (type !== DeleteType.burnByPeriod) {
             setSelectedDateTime("");
         }
     };
 
     const saveNote = async () => {
-        if (noteType === DeleteType.burnAfterTime && !selectedDateTime) {
+        if (noteType === DeleteType.burnByPeriod && !selectedDateTime) {
             setModal({ show: true, message: t('editNote.specifyDateTime') });
             return;
         }
@@ -231,7 +231,7 @@ export const EditNote = () => {
                         </div>
                     </div>
 
-                    {noteType === DeleteType.burnAfterTime && (
+                    {noteType === DeleteType.burnByPeriod && (
                         <div className={"time-settings"}>
                             <label className={"text settings-label"}>{t('editNote.deleteDateTime')}</label>
                             <input
