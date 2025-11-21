@@ -45,9 +45,9 @@ export async function getNote(url, token = null) {
 }
 
 
-export async function getNotes(token) {
+export async function getNotes(token, page = 0) {
     async function fetchNotes() {
-        return fetch(`${NoteApi}/note/list/me`, {
+        return fetch(`${NoteApi}/note/list/me?page=${page}`, {
             method: "GET",
             headers: getHeaders(token)
         });
