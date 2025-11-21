@@ -822,6 +822,8 @@ button.auth {
 }
 
 .row {
+  max-width: 1400px;
+  justify-self: center;
   margin-top: 1.5rem;
   display: flex;
   flex-wrap: wrap;
