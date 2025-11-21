@@ -6,19 +6,19 @@ import {useAuth} from "../context/AuthContext";
 import { SimpleModal } from "../components/modals/SimpleModal";
 
 const DeleteType = {
-    default: "Default",
+    never: "Never",
     burnAfterRead: "Burn after read",
     burnAfterTime: "Burn after time"
 };
 
 const deleteTypeToExpirationTypeMap = {
-    [DeleteType.default]: "NEVER",
+    [DeleteType.never]: "NEVER",
     [DeleteType.burnAfterRead]: "BURN_AFTER_READ",
     [DeleteType.burnAfterTime]: "BURN_AFTER_TIME",
 };
 
 export const Note = () => {
-    const [noteType, setNoteType] = useState(DeleteType.default);
+    const [noteType, setNoteType] = useState(DeleteType.never);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [selectedDateTime, setSelectedDateTime] = useState("");
     const [title, setTitle] = useState("");
