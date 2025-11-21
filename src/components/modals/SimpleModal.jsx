@@ -1,8 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import "../../static/styles/modals/ModalWindow.scss";
 
 export const SimpleModal = ({ show, message, onClose }) => {
+    useEffect(() => {
+        const handleKeyPress = (event) => {
+            if (event.key === 'Enter' && show) {
+                onClose();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [show, onClose]);
+
     if (!show) return null;
 
     return (
