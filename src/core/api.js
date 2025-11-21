@@ -1,17 +1,29 @@
 const NoteApi = "http://localhost:8080/api/v1";
 const UserApi = "http://localhost:8081/api/v1";
 
-export async function getNote(url, token) {
-    console.log("Sending request with token:", token);
+function getHeaders(token: string) {
+    const headers = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    return headers;
+}
+
+//-------------------- API for note service --------------------
+
+export async function getNote(url, token = null) {
+    async function fetchNote() {
+        return fetch(`${NoteApi}/note/${url}`, {
+            method: "GET",
+            headers: getHeaders(token)
+        });
+    }
 
     try {
-        const response = await fetch(`${NoteApi}/note/${url}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("token")}`
-            },
-        });
+        let response = await fetchNote();
+
+        if (response.status === 401) {
+            token = await refresh();
+            response = await fetchNote();
+        }
 
         if (response.ok) {
             return { ok: true, data: await response.json() };
@@ -32,16 +44,22 @@ export async function getNote(url, token) {
     }
 }
 
+
 export async function getNotes(token) {
-    try {
-        const response = await fetch(`${NoteApi}/note/list/me`, {
+    async function fetchNotes() {
+        return fetch(`${NoteApi}/note/list/me`, {
             method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
-            credentials: "include"
+            headers: getHeaders(token)
         });
+    }
+
+    try {
+        let response = await fetchNotes();
+
+        if (response.status === 401) {
+            token = await refresh();
+            response = await fetchNotes();
+        }
 
         if (!response.ok) {
             if (response.status === 401) {
@@ -55,10 +73,7 @@ export async function getNotes(token) {
 
         const analyticsResponse = await fetch(`${NoteApi}/analytics/view-notes`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
+            headers: getHeaders(token),
             body: JSON.stringify({ urls }),
         });
 
@@ -90,11 +105,7 @@ export async function deleteNote(url, token) {
     try {
         const response = await fetch(`${NoteApi}/note/${url}`, {
             method: "PATCH",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
+            headers: getHeaders(token)
         });
 
         if (response.status === 204) {
@@ -117,11 +128,7 @@ export async function createNote(note, token) {
     try {
         const response = await fetch(`${NoteApi}/note`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            credentials: 'include',
+            headers: getHeaders(token),
             body: JSON.stringify({
                 title: note.title,
                 content: note.content,
@@ -153,13 +160,10 @@ export async function updateNote(note, token) {
         return { ok: false, error: "Укажите время для Burn by period" };
     }
 
-    try {
-        const response = await fetch(`${NoteApi}/note/${note.url}`, {
+    async function fetchNotes() {
+        return fetch(`${NoteApi}/note/${note.url}`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
+            headers: getHeaders(token),
             body: JSON.stringify({
                 title: note.title,
                 content: note.content,
@@ -170,6 +174,15 @@ export async function updateNote(note, token) {
                         : null,
             }),
         });
+    }
+
+    try {
+        let response = await fetchNotes();
+
+        if (response.status === 401) {
+            token = await refresh();
+            response = await fetchNotes();
+        }
 
         if (response.status === 200) {
             return { ok: true, data: await response.json() };
@@ -205,7 +218,7 @@ export async function authentication(user, password) {
     try {
         const response = await fetch(`${UserApi}/auth/login`, {
             method: "PATCH",
-            headers: { "Content-Type": "application/json" },
+            headers: getHeaders(null),
             credentials: "include",
             body: JSON.stringify({ login: user, password }),
         });
@@ -226,7 +239,7 @@ export async function register(user, password) {
     try {
         const response = await fetch(`${UserApi}/user/register`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: getHeaders(null),
             body: JSON.stringify({ login: user, password }),
         });
 
