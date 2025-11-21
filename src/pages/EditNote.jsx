@@ -142,8 +142,6 @@ export const EditNote = () => {
     };
 
     const cancelNote = () => {
-        setIsDropdownOpen(false);
-        setEditMode(false);
         window.location.reload();
     }
 
