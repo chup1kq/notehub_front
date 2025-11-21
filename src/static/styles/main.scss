@@ -823,12 +823,18 @@ button.auth {
 
 .row {
   max-width: 1400px;
-  justify-self: center;
+  //justify-self: center;
   margin-top: 1.5rem;
   display: flex;
   flex-wrap: wrap;
   margin-left: -0.5rem;
   margin-right: -0.5rem;
+}
+
+.custom-row {
+  max-width: 1400px;
+  width: 100%;
+  margin-top: 1.5rem;
 }
 
 .row > * {

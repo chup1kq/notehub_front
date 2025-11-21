@@ -53,8 +53,8 @@ export const User = () => {
 
     return (
         <>
-            <div className={"container"}>
-                <div className={"row"}>
+            <div className={"container d-flex justify-content-center"}>
+                <div className={"row custom-row"}>
                     <div className={"container user-info col-md-3 text px-sm-4"}>
                         <h1>{user}</h1>
                         <p>Заметок: {notesPage.totalElements}</p>
