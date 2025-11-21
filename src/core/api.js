@@ -21,7 +21,14 @@ export async function getNote(url, token = null) {
         let response = await fetchNote();
 
         if (response.status === 401) {
-            token = await refresh();
+            const refreshResponse: RefreshTokenApi = await refresh();
+
+            if (!refreshResponse.ok) {
+                void reLogin();
+                return { ok: false, error: "Не удалось обновить токен" };
+            }
+
+            token = refreshResponse.token;
             response = await fetchNote();
         }
 
@@ -34,7 +41,8 @@ export async function getNote(url, token = null) {
         }
 
         if (response.status === 404) {
-            return { ok: false, error: "Заметка не найдена." };
+            const json = await response.json();
+            return {ok: false, data: json, error: "Заметка не найдена."};
         }
 
         return { ok: false, error: `Ошибка сервера: ${response.status}` };
@@ -57,15 +65,15 @@ export async function getNotes(token, page = 0) {
         let response = await fetchNotes();
 
         if (response.status === 401) {
-            token = await refresh();
-            response = await fetchNotes();
-        }
+            const refreshResponse: RefreshTokenApi = await refresh();
 
-        if (!response.ok) {
-            if (response.status === 401) {
-                return { ok: false, error: "Неавторизованный доступ" };
+            if (!refreshResponse.ok) {
+                void reLogin();
+                return { ok: false, error: "Не удалось обновить токен" };
             }
-            return { ok: false, error: `Ошибка загрузки заметок: ${response.status}` };
+
+            token = refreshResponse.token;
+            response = await fetchNotes();
         }
 
         const data = await response.json();
@@ -102,11 +110,26 @@ export async function getNotes(token, page = 0) {
 }
 
 export async function deleteNote(url, token) {
-    try {
-        const response = await fetch(`${NoteApi}/note/${url}`, {
+    async function fetchDelete() {
+        return fetch(`${NoteApi}/note/${url}`, {
             method: "PATCH",
             headers: getHeaders(token)
         });
+    }
+    try {
+        let response = await fetchDelete();
+
+        if (response.status === 401) {
+            const refreshResponse: RefreshTokenApi = await refresh();
+
+            if (!refreshResponse.ok) {
+                void reLogin();
+                return { ok: false, error: "Не удалось обновить токен" };
+            }
+
+            token = refreshResponse.token;
+            response = await deleteNote();
+        }
 
         if (response.status === 204) {
             return { ok: true };
@@ -125,8 +148,8 @@ export async function deleteNote(url, token) {
 }
 
 export async function createNote(note, token) {
-    try {
-        const response = await fetch(`${NoteApi}/note`, {
+    async function fetchCreate() {
+        return fetch(`${NoteApi}/note`, {
             method: 'POST',
             headers: getHeaders(token),
             body: JSON.stringify({
@@ -139,6 +162,22 @@ export async function createNote(note, token) {
                         : null,
             }),
         });
+    }
+
+    try {
+        let response = await fetchCreate();
+
+        if (response.status === 401) {
+            const refreshResponse: RefreshTokenApi = await refresh();
+
+            if (!refreshResponse.ok) {
+                void reLogin();
+                return { ok: false, error: "Не удалось обновить токен" };
+            }
+
+            token = refreshResponse.token;
+            response = await fetchCreate();
+        }
 
         if (response.status === 200) {
             return { ok: true, data: await response.json() };
@@ -180,7 +219,14 @@ export async function updateNote(note, token) {
         let response = await fetchNotes();
 
         if (response.status === 401) {
-            token = await refresh();
+            const refreshResponse: RefreshTokenApi = await refresh();
+
+            if (!refreshResponse.ok) {
+                void reLogin();
+                return { ok: false, error: "Не удалось обновить токен" };
+            }
+
+            token = refreshResponse.token;
             response = await fetchNotes();
         }
 
@@ -263,21 +309,27 @@ export async function register(user, password) {
     }
 }
 
-export async function refresh() {
-    const response = await fetch(`${UserApi}/auth/refresh`, {
-        method: "GET",
-        credentials: "include"
-    });
+async function refresh(): Promise<RefreshTokenApi> {
+    try {
+        const response = await fetch(`${UserApi}/auth/refresh`, {
+            method: "GET",
+            credentials: "include"
+        });
 
-    if (response.ok) {
+        if (!response.ok) {
+            await reLogin();
+            return {ok: false};
+        }
+
         const newToken = await response.text();
         if (setTokenRef) setTokenRef(newToken);
-        return newToken;
+        return {ok: true, token: newToken};
+
+    } catch (e) {
+        await reLogin();
+        return { ok: false, error: "Ошибка соединения" };
     }
-
-    return null;
 }
-
 
 export async function logout() {
     try {
