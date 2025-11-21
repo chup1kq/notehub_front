@@ -6,26 +6,26 @@ import {useAuth} from "../context/AuthContext";
 import { SimpleModal } from "../components/modals/SimpleModal";
 
 const DeleteType = {
-    default: "Default",
+    never: "Never",
     burnAfterRead: "Burn after read",
     burnAfterTime: "Burn after time"
 }
 
 const expirationTypeToDeleteTypeMap = {
-    "NEVER": DeleteType.default,
+    "NEVER": DeleteType.never,
     "BURN_AFTER_READ": DeleteType.burnAfterRead,
     "BURN_AFTER_TIME": DeleteType.burnAfterTime,
 };
 
 const deleteTypeToExpirationTypeMap = {
-    [DeleteType.default]: "NEVER",
+    [DeleteType.never]: "NEVER",
     [DeleteType.burnAfterRead]: "BURN_AFTER_READ",
     [DeleteType.burnAfterTime]: "BURN_AFTER_TIME",
 };
 
 export const EditNote = () => {
     const { id } = useParams();
-    const [noteType, setNoteType] = useState(DeleteType.default);
+    const [noteType, setNoteType] = useState(DeleteType.never);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [selectedDateTime, setSelectedDateTime] = useState("");
     const [title, setTitle] = useState("");
@@ -57,7 +57,7 @@ export const EditNote = () => {
             setTitle(note.title);
             setNoteContent(note.content);
 
-            const mappedNoteType = expirationTypeToDeleteTypeMap[note.expirationType] || DeleteType.default;
+            const mappedNoteType = expirationTypeToDeleteTypeMap[note.expirationType] || DeleteType.never;
             setNoteType(mappedNoteType);
 
             if (note.expirationPeriod) {
@@ -70,7 +70,7 @@ export const EditNote = () => {
             }
         };
 
-        fetchNote();
+        void fetchNote();
     }, [id, token]);
 
 
