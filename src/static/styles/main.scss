@@ -1035,3 +1035,18 @@ button.auth {
   margin-bottom: 16px;
   min-height: 50px;
 }
+
+.card-header.back-header {
+  gap: 0.5rem;
+}
+
+@media (max-width: 576px) {
+  .card-header.back-header {
+    gap: 1.5rem;
+  }
+
+  .card-header.back-header > div:first-child {
+    margin-right: auto;
+    min-width: 60px;
+  }
+}

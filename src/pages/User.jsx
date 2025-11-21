@@ -4,6 +4,8 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {getNotes} from "../core/api";
 import { SimpleModal } from "../components/modals/SimpleModal";
+import { NoteDropdown } from "../components/NoteDropdown";
+import { handleNoteDropdownAction } from "../handlers/noteDropdownHandler.js";
 
 export const User = () => {
     const { user, token } = useAuth();
@@ -40,6 +42,10 @@ export const User = () => {
 
         loadNotes();
     }, [user, token, page]);
+
+    const handleNoteAction = async (action, noteUrl) => {
+        await handleNoteDropdownAction(action, noteUrl, setModal, token, navigate);
+    };
 
     if (!notesPage) {
         return <div className="text-center mt-5 text">Загрузка...</div>;
@@ -79,14 +85,19 @@ export const User = () => {
                                                     className="card-header back-header"
                                                     style={{
                                                         display: "flex",
-                                                        justifyContent: "space-between",
-                                                        alignItems: "center"
+                                                        justifyContent: "right",
+                                                        alignItems: "center",
+                                                        gap: "0.5rem",
                                                     }}
                                                 >
-                                                    <div style={{display: "flex", alignItems: "center", gap: "4px"}}>
+                                                    <div style={{display: "flex", alignItems: "center", gap: "4px", marginRight: "auto"}}>
                                                         <IoMdEye/> {note.views || 0}
                                                     </div>
                                                     <div>{formatDate(note.createdAt)}</div>
+                                                    <NoteDropdown
+                                                        noteUrl={note.url}
+                                                        onAction={handleNoteAction}
+                                                    />
                                                 </div>
                                                 <div className="card-body back-body">
                                                     <h2 className="card-title">{note.title}</h2>
