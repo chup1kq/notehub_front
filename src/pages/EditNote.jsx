@@ -42,8 +42,6 @@ export const EditNote = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!token) return;
-
         const fetchNote = async () => {
             const result = await getNote(id, token);
 
@@ -100,20 +98,27 @@ export const EditNote = () => {
         try {
             const updatedNote = await updateNote(noteToUpdate, token);
 
+            if (!updatedNote.ok) {
+                setModal({
+                    show: true,
+                    message: updatedNote.error });
+
+                window.location.reload();
+                return;
+            }
+
+
             setTitle(updatedNote.title);
             setNoteContent(updatedNote.content);
-            setNoteType(expirationTypeToDeleteTypeMap[updatedNote.expirationType] || DeleteType.default);
+            setNoteType(expirationTypeToDeleteTypeMap[updatedNote.expirationType] || DeleteType.never);
 
             if (updatedNote.expirationPeriod) {
                 setSelectedDateTime(new Date(updatedNote.expirationPeriod).toISOString().slice(0, 16));
             } else {
                 setSelectedDateTime("");
             }
-
             setEditMode(false);
-
             setModal({ show: true, message: "Изменения успешно сохранены" });
-
         } catch (error) {
             setModal({ show: true, message: error.message });
         }
