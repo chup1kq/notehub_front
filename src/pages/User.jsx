@@ -133,7 +133,7 @@ export const User = () => {
                                 )}
 
                                 <div className="d-flex justify-content-center">
-                                    <a className="btn btn-primary" href={"/"}>
+                                    <a className="btn btn-primary text-center" href={"/"}>
                                         Создать новую заметку
                                     </a>
                                 </div>
