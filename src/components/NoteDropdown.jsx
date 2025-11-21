@@ -30,12 +30,29 @@ export const NoteDropdown = ({ noteUrl, setModal, token }) => {
         setIsOpen(!isOpen);
     };
 
-    const handleAction = (action) => {
-        setIsOpen(false);
-        if (onAction) {
-            onAction(action, noteUrl);
-        }
+    const handleDeleteNote = async () => {
+        if (!token) return;
+
+        await deleteNote(noteUrl, token);
+        window.location.reload();
     };
+
+    const handleCopyUlr = async ()  => {
+        try {
+            const noteUrlFull = `${baseNoteUrl}/${noteUrl}`;
+            await navigator.clipboard.writeText(noteUrlFull);
+            setModal({
+                show: true,
+                message: tApi("ui.clipboard.copied")
+            });
+        } catch (err) {
+            setModal({
+                show: true,
+                message: tApi("ui.clipboard.copyFailed")
+            });
+        }
+    }
+
 
     return (
         <div className="note-dropdown" ref={dropdownRef}>
@@ -48,7 +65,7 @@ export const NoteDropdown = ({ noteUrl, setModal, token }) => {
                     className="note-dropdown-item"
                     onClick={(e) => {
                         e.stopPropagation();
-                        handleAction('share');
+                        handleCopyUlr();
                     }}
                 >
                     {t('notes.share')}
@@ -57,7 +74,7 @@ export const NoteDropdown = ({ noteUrl, setModal, token }) => {
                     className="note-dropdown-item"
                     onClick={(e) => {
                         e.stopPropagation();
-                        handleAction('delete');
+                        handleDeleteNote();
                     }}
                 >
                     {t('notes.delete')}
