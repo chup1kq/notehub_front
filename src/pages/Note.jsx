@@ -72,7 +72,7 @@ export const Note = () => {
             return;
         }
 
-        navigate(`/note/${result.data}`);
+        navigate(`/note/${result.data.url}`);
     };
 
     return (
