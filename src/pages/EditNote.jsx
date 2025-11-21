@@ -61,7 +61,7 @@ export const EditNote = () => {
             setNoteType(expirationTypeToDeleteTypeMap[initialNote.expirationType]);
 
             if (initialNote.expirationPeriod) {
-                setSelectedDateTime(convertDurationToDateTime(initialNote.expirationPeriod / 1000)); // передаем в секундах
+                setSelectedDateTime(convertDurationToDateTime(initialNote.expirationPeriod));
             }
 
             return;
@@ -88,7 +88,7 @@ export const EditNote = () => {
             setNoteType(mappedNoteType);
 
             if (note.expirationPeriod) {
-                setSelectedDateTime(convertDurationToDateTime(note.expirationPeriod / 1000));
+                setSelectedDateTime(convertDurationToDateTime(note.expirationPeriod));
             } else {
                 setSelectedDateTime("");
             }
@@ -141,7 +141,7 @@ export const EditNote = () => {
 
             if (updatedNote.data.expirationPeriod) {
                 const dt = convertDurationToDateTime(
-                    updatedNote.data.expirationPeriod / 1000
+                    updatedNote.data.expirationPeriod
                 );
                 setSelectedDateTime(dt);
             } else {
